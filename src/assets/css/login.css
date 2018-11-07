@@ -1,0 +1,27 @@
+[v-cloak] {
+    display: none;
+}
+
+body {
+    background-color: #326696;
+    margin: 0px;
+    overflow: hidden;
+    font-family: Monospace;
+    font-size: 13px;
+    text-align: center;
+    font-weight: bold;
+    text-align: center;
+}
+a {
+    color: #0078ff;
+}
+
+.login_div{
+    position: fixed;
+    width: 20%;
+    height: 400px;
+    top: 25%;
+    left: 40%;
+    opacity:0.5;
+    background-color: #f2f4f6;
+}
