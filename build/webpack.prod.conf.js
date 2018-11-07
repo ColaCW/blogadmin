@@ -59,15 +59,14 @@ const webpackConfig = merge(baseWebpackConfig, {
         ? { safe: true, map: { inline: false } }
         : { safe: true }
     }),
-    // generate dist index.html with correct asset hash for caching.
-    // you can customize output by editing /index.html
+    // generate dist main.html with correct asset hash for caching.
+    // you can customize output by editing /main.html
     // see https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
       filename: process.env.NODE_ENV === 'testing'
-        ? 'index.html'
+        ? 'main.html'
         : config.build.index,
-      template: 'index.html',
-      favicon: path.resolve('static/gaga.jpg'),
+      template: 'main.html',
       inject: true,
       minify: {
         removeComments: true,
