@@ -9,7 +9,7 @@ function getHost(){
 var Web = {
 
   // host: getHost(),
-  host:"http://127.0.0.1:8080",
+  host:"http://127.0.0.1",
 
   testF: function () {
     alert("test");
@@ -38,6 +38,8 @@ var Web = {
       url: url,
       data: JSON.stringify(data),
       dataType: "json",
+      crossDomain: true,
+      xhrFields: {withCredentials: true},
       success: success
     });
   },

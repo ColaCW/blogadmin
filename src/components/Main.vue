@@ -11,6 +11,10 @@
   export default {
     data () {
       return {
+        home:"systemmenu",
+        page:0,
+        pageSize:10,
+        items:[],
         mainMsg: '我是主页组件'
       }
     },
@@ -19,8 +23,16 @@
     },
     methods: {
       init:function(){
-        // $("canvas").hide();
-        // $("body").css("background","");
+          var that = this;
+          var data = {
+            page:that.page,
+            pageSize:that.pageSize
+          }
+          Web.post(Web.host + "/api/"+ that.home + "/search.do",data,function (res) {
+              if(res.status){
+                that.items = res.data.content
+              }
+          })
       },
       logout:function () {
         Web.go(Web.host)
