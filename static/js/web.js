@@ -1,19 +1,17 @@
-function getHost(){
-  var s=location.href;
-  var i=s.indexOf('/',10);
-  if(i!=-1){
-    s=s.substring(0,i);
+function getHost() {
+  var s = location.href;
+  var i = s.indexOf('/', 10);
+  if (i != -1) {
+    s = s.substring(0, i);
   }
   return s;
 }
+
 var Web = {
 
   // host: getHost(),
-  host:"http://127.0.0.1",
+  host: "http://127.0.0.1",
 
-  testF: function () {
-    alert("test");
-  },
   get: function (url, data, success) {
     var data2 = "";
     if (data) {
@@ -38,14 +36,99 @@ var Web = {
       url: url,
       data: JSON.stringify(data),
       dataType: "json",
-      crossDomain: true,
-      xhrFields: {withCredentials: true},
       success: success
     });
   },
 
   go: function (url) {
     location.href = url;
+  },
+
+  setValue:function(key, value){
+    store.set(key, value);
+  },
+
+  getValue:function (key) {
+    return store.get(key);
+  },
+
+  login: function (phone, password, callback) {
+    var data = {
+      phone: phone,
+      password: password
+    }
+    Web.post(Web.host + "/api/web/login.do", data, function (res) {
+      callback(res);
+      if(res.status){
+        Web.saveUser(res.data);
+      }
+    })
+  },
+
+  logout: function (goPage) {
+    if(typeof(goPage)=='undefined' || !goPage){
+      goPage = Web.host;
+    }
+    var user=Web.getUser();
+    if(user && user.token){
+      Web.post(Web.host + "/api/web/logout.do", {token:user.token}, function (res) {
+        if(res.status){
+          Web.saveUser(null);
+          Web.go(goPage);
+        }
+      });
+    }else{
+      Web.saveUser(null);
+      Web.go(goPage)
+    }
+  },
+
+  getParam: function (url, name, defaultValue) {
+    if (typeof (url) == 'undefined' || !url) {
+      url = window.location.search.substr(1);
+    }
+    var i = url.indexOf('#');
+    if (i != -1) {
+      url = url.substring(0, i);
+    }
+    i = url.indexOf('?');
+    if (i != -1) {
+      url = url.substring(i + 1);
+    }
+    url = '&' + url + '&';
+    var key = '&' + name + '=';
+    var i = url.indexOf(key);
+    if (i != -1) {
+      var j = url.indexOf('&', i + key.length);
+      if (j != -1) {
+        return url.substring(i + key.length, j);
+      }
+    }
+    return defaultValue;
+  },
+
+  getUser: function () {
+    var user = this.getValue("user");
+    return user;
+  },
+
+  saveUser: function (user) {
+    this.setValue("user", user);
+  },
+
+  getToken:function(){
+    var user = this.getValue("user");
+    return user && user.token;
+  },
+
+  getSrc:function(s){
+    if(s && s.indexOf("http")==-1){
+
+      s=this.host+s;
+    }else{
+      s='/f/_.gif';
+    }
+    return s;
   },
 };
 
