@@ -123,8 +123,7 @@ var Web = {
 
   getSrc:function(s){
     if(s && s.indexOf("http")==-1){
-
-      s=this.host+s;
+      s=this.host+"/"+s;
     }else{
       s='/f/_.gif';
     }
@@ -132,5 +131,6 @@ var Web = {
   },
 };
 
+export {Web}
 
 

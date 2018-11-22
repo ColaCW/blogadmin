@@ -8,8 +8,8 @@
       <ul class="layui-nav layui-layout-right">
         <li class="layui-nav-item">
           <a href="javascript:;">
-            <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
-            贤心
+            <img :src="imgPhoto" class="layui-nav-img">
+            {{user.username}}
           </a>
           <dl class="layui-nav-child">
             <dd><a href="">清除缓存</a></dd>
@@ -20,13 +20,13 @@
     </div>
     <div class="layui-side layui-bg-black">
       <div class="layui-side-scroll">
-        <ul class="layui-nav layui-nav-tree">
+        <ul class="layui-nav layui-nav-tree" layui-filter="main_nav" id="nav">
           <template v-for="(menu,index) in menus" v-if="menu.parentId == 0">
             <li :class="index == 0 ? 'layui-nav-item layui-nav-itemed' : 'layui-nav-item'">
               <a class="" href="javascript:;"><i class="layui-icon">&#xe68e;</i>&nbsp;&nbsp;{{menu.name}}</a>
               <dl class="layui-nav-child">
                 <template v-for="(menu1,index1) in menus" v-if="menu1.parentId == menu.id">
-                  <dd style="margin-left: 30px;"><a href="javascript:;" @click="goMenu(menu1.href)">&nbsp;&nbsp;{{menu1.name}}</a></dd>
+                  <dd><a href="javascript:;" @click="goMenu(menu1.href)">&nbsp;&nbsp;{{menu1.name}}</a></dd>
                 </template>
               </dl>
             </li>
@@ -35,7 +35,18 @@
       </div>
     </div>
     <div class="layui-body">
-      <router-view></router-view>
+      <div class="layui-tab" lay-allowClose="true" lay-filter="main_tab">
+        <ul class="layui-tab-title">
+          <li lay-id="11" class="layui-this">首页</li>
+          <li lay-id="22">用户管理</li>
+          <li lay-id="33">权限分配</li>
+          <li lay-id="44">商品管理</li>
+          <li lay-id="55">订单管理</li>
+        </ul>
+        <div class="layui-tab-content">
+            <router-view></router-view>
+        </div>
+      </div>
     </div>
     <div class="layui-footer" style="text-align: center">
       Design  by   刘国强个人博客   吉ICP备18002404号
@@ -43,23 +54,31 @@
   </div>
 </template>
 <script>
-  // import { Web } from "../static/js/web.js";
+  import { Web } from "../static/js/web.js";
   layui.use('element', function(){
     var element = layui.element;
+    element.on('tab(main_tab)', function(data){
+      console.log(data.index); //得到当前Tab的所在下标
+    });
+    element.on('tabDelete(main_tab)', function(data){
+      console.log(data.index); //删除下标
+    });
   });
   export default {
     name: 'App',
     data () {
       return {
-        home:"systemmenu",
+        home:"SystemMenu",
         page:0,
         pageSize:100,
         menus:[],
-        user:Web.getUser(),
-        img:Web.getSrc('/index/img/gaga.jpg')
+        user:{},
+        imgPhoto:"",
       }
     },
     mounted:function(){
+      this.user = Web.getUser();
+      this.imgPhoto = Web.getSrc('/index/img/gaga.jpg');
       this.init();
     },
     methods: {
@@ -85,6 +104,7 @@
       },
       goMenu:function (href) {
         console.log(href)
+        this.$router.push(href)
       }
     }
   }
