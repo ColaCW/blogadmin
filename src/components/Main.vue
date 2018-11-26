@@ -1,11 +1,8 @@
 <template>
   <div>
-    hello world
+    首页
   </div>
 </template>
-<style scoped>
-  @import "../../static/css/main.css";
-</style>
 <script>
   export default {
     data () {

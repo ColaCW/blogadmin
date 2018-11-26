@@ -26,7 +26,7 @@
               <a class="" href="javascript:;"><i class="layui-icon">&#xe68e;</i>&nbsp;&nbsp;{{menu.name}}</a>
               <dl class="layui-nav-child">
                 <template v-for="(menu1,index1) in menus" v-if="menu1.parentId == menu.id">
-                  <dd><a href="javascript:;" @click="goMenu(menu1.href)">&nbsp;&nbsp;{{menu1.name}}</a></dd>
+                  <dd><a href="javascript:;" @click="goMenu(menu1.href,menu1.name)">&nbsp;&nbsp;{{menu1.name}}</a></dd>
                 </template>
               </dl>
             </li>
@@ -36,12 +36,10 @@
     </div>
     <div class="layui-body">
       <div class="layui-tab" lay-allowClose="true" lay-filter="main_tab">
-        <ul class="layui-tab-title">
-          <li lay-id="11" class="layui-this">首页</li>
-          <li lay-id="22">用户管理</li>
-          <li lay-id="33">权限分配</li>
-          <li lay-id="44">商品管理</li>
-          <li lay-id="55">订单管理</li>
+        <ul class="layui-tab-title" style="padding: 0 10px;">
+            <template v-for="(topMenu,index) in topMenus">
+              <li :lay-id="index" :class="index == 0 ? 'layui-this' : ''">{{topMenu.name}}</li>
+            </template>
         </ul>
         <div class="layui-tab-content">
             <router-view></router-view>
@@ -54,31 +52,44 @@
   </div>
 </template>
 <script>
+  import App from './App.vue'
   import { Web } from "../static/js/web.js";
   layui.use('element', function(){
     var element = layui.element;
     element.on('tab(main_tab)', function(data){
+      App.chooseTopIndex = data.index;
+      App.goMenu(App.topMenus[data.index].href,App.topMenus[data.index].name);
       console.log(data.index); //得到当前Tab的所在下标
     });
     element.on('tabDelete(main_tab)', function(data){
+      if(App.chooseTopIndex == data.index && data.index > 0){
+        App.goMenu(App.topMenus[data.index-1].href,App.topMenus[data.index-1].name);
+      }
       console.log(data.index); //删除下标
     });
   });
-  export default {
+  export default{
     name: 'App',
     data () {
       return {
         home:"SystemMenu",
         page:0,
-        pageSize:100,
+        pageSize:10,
         menus:[],
         user:{},
         imgPhoto:"",
+        chooseTopIndex:0,
+        topMenus:[
+          {"name":"首页","href":"/"},{"name":"系统菜单","href":"SystemMenu"},{"name":"系统菜单","href":"SystemMenu"}
+          ]
       }
     },
-    mounted:function(){
+    beforeMount:function(){
+      var now_router = this.$router.history.current.name;
+      console.log(now_router);
       this.user = Web.getUser();
       this.imgPhoto = Web.getSrc('/index/img/gaga.jpg');
+      this.$router.push("/")
       this.init();
     },
     methods: {
@@ -102,10 +113,26 @@
       logout:function () {
         Web.logout(Web.host+"/index.do");
       },
-      goMenu:function (href) {
-        console.log(href)
-        this.$router.push(href)
+      goMenu:function (href,name) {
+        var that = this;
+        var flag = false;
+        for(var i = 0;i<that.topMenus.length;i++){
+          if(href == that.topMenus[i].href){
+            that.chooseTopIndex = i;
+            flag = true;
+            break;
+          }
+        }
+        if(!flag){
+          var data = {
+            name:name,
+            href:href
+          }
+          that.topMenus.push(data);
+        }
+        that.$router.push(href)
       }
     }
   }
+
 </script>
