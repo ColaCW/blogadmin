@@ -23,9 +23,9 @@
         <ul class="layui-nav layui-nav-tree" layui-filter="main_nav" id="nav">
           <template v-for="(menu,index) in menus" v-if="menu.parentId == 0">
             <li :class="index == 0 ? 'layui-nav-item layui-nav-itemed' : 'layui-nav-item'">
-              <a class="" href="javascript:;"><i class="layui-icon">&#xe68e;</i>&nbsp;&nbsp;{{menu.name}}</a>
+              <a href="javascript:;"><i class="layui-icon">&#xe68e;</i>&nbsp;&nbsp;{{menu.name}}</a>
               <dl class="layui-nav-child">
-                <template v-for="(menu1,index1) in menus" v-if="menu1.parentId == menu.id">
+                <template v-for="menu1 in menus" v-if="menu1.parentId == menu.id">
                   <dd><a href="javascript:;" @click="goMenu(menu1.href,menu1.name)">&nbsp;&nbsp;{{menu1.name}}</a></dd>
                 </template>
               </dl>
@@ -35,10 +35,13 @@
       </div>
     </div>
     <div class="layui-body">
-      <div class="layui-tab" lay-allowClose="true" lay-filter="main_tab">
+      <div class="layui-tab" lay-filter="top_tab">
         <ul class="layui-tab-title" style="padding: 0 10px;">
             <template v-for="(topMenu,index) in topMenus">
-              <li :lay-id="index" :class="index == 0 ? 'layui-this' : ''">{{topMenu.name}}</li>
+              <li :lay-id="index" :class="index == chooseTopIndex ? 'layui-this' : ''">
+                <template @click="goTopMenu(index)">{{topMenu.name}}</template>
+                <i class="layui-icon layui-unselect layui-tab-close" @click="deleteTopMenu(index)">ဆ</i>
+              </li>
             </template>
         </ul>
         <div class="layui-tab-content">
@@ -52,21 +55,12 @@
   </div>
 </template>
 <script>
+
   import App from './App.vue'
   import { Web } from "../static/js/web.js";
+  
   layui.use('element', function(){
     var element = layui.element;
-    element.on('tab(main_tab)', function(data){
-      App.chooseTopIndex = data.index;
-      App.goMenu(App.topMenus[data.index].href,App.topMenus[data.index].name);
-      console.log(data.index); //得到当前Tab的所在下标
-    });
-    element.on('tabDelete(main_tab)', function(data){
-      if(App.chooseTopIndex == data.index && data.index > 0){
-        App.goMenu(App.topMenus[data.index-1].href,App.topMenus[data.index-1].name);
-      }
-      console.log(data.index); //删除下标
-    });
   });
   export default{
     name: 'App',
@@ -79,15 +73,13 @@
         user:{},
         imgPhoto:"",
         chooseTopIndex:0,
-        topMenus:[
-          {"name":"首页","href":"/"},{"name":"系统菜单","href":"SystemMenu"},{"name":"系统菜单","href":"SystemMenu"}
-          ]
+        topMenus:[{"name":"首页","href":"/"}]
       }
     },
     beforeMount:function(){
       var now_router = this.$router.history.current.name;
       console.log(now_router);
-      this.user = Web.getUser();
+      this.user = {"username":"lgq"};
       this.imgPhoto = Web.getSrc('/index/img/gaga.jpg');
       this.$router.push("/")
       this.init();
@@ -106,18 +98,32 @@
             }else{
               that.menus = res.data.content
             }
-            console.log(that.menus)
           }
         })
       },
       logout:function () {
         Web.logout(Web.host+"/index.do");
       },
+      goTopMenu:function(index){
+        var that = this;
+        that.chooseTopIndex = index;
+        that.$router.push(that.topMenus[that.chooseTopIndex].href);
+        that.$forceUpdate();
+      },
+      deleteTopMenu:function(index){
+        var that = this;
+        if(index > 0){
+          that.chooseTopIndex = index-1;
+          that.topMenus.splice(index,1);
+        }
+        that.$router.push(that.topMenus[that.chooseTopIndex].href);
+        that.$forceUpdate();
+      },
       goMenu:function (href,name) {
         var that = this;
         var flag = false;
         for(var i = 0;i<that.topMenus.length;i++){
-          if(href == that.topMenus[i].href){
+          if(href === that.topMenus[i].href){
             that.chooseTopIndex = i;
             flag = true;
             break;
@@ -127,10 +133,12 @@
           var data = {
             name:name,
             href:href
-          }
+          };
           that.topMenus.push(data);
+          that.chooseTopIndex = that.topMenus.length-1;
         }
-        that.$router.push(href)
+        that.$router.push(href);
+        that.$forceUpdate();
       }
     }
   }
