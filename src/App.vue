@@ -39,7 +39,7 @@
         <ul class="layui-tab-title" style="padding: 0 10px;">
             <template v-for="(topMenu,index) in topMenus">
               <li :lay-id="index" :class="index == chooseTopIndex ? 'layui-this' : ''">
-                <template @click="goTopMenu(index)">{{topMenu.name}}</template>
+                <label @click="goTopMenu(index)">{{topMenu.name}}</label>
                 <i class="layui-icon layui-unselect layui-tab-close" @click="deleteTopMenu(index)">ဆ</i>
               </li>
             </template>
@@ -58,7 +58,7 @@
 
   import App from './App.vue'
   import { Web } from "../static/js/web.js";
-  
+
   layui.use('element', function(){
     var element = layui.element;
   });
