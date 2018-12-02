@@ -38,13 +38,13 @@
       <div class="layui-tab" lay-filter="top_tab">
         <ul class="layui-tab-title" style="padding: 0 10px;">
             <template v-for="(topMenu,index) in topMenus">
-              <li :lay-id="index" :class="index == chooseTopIndex ? 'layui-this' : ''">
-                <label @click="goTopMenu(index)">{{topMenu.name}}</label>
-                <i class="layui-icon layui-unselect layui-tab-close" @click="deleteTopMenu(index)">ဆ</i>
+              <li :class="index == chooseTopIndex ? 'layui-this' : ''">
+                <label>{{topMenu.name}}</label>
+                <!--<i class="layui-icon layui-unselect layui-tab-close" @click="deleteTopMenu(index)">ဆ</i>-->
               </li>
             </template>
         </ul>
-        <div class="layui-tab-content">
+        <div class="layui-tab-content" style="padding: 0;">
             <router-view></router-view>
         </div>
       </div>
@@ -59,9 +59,6 @@
   import App from './App.vue'
   import { Web } from "../static/js/web.js";
 
-  layui.use('element', function(){
-    var element = layui.element;
-  });
   export default{
     name: 'App',
     data () {
@@ -76,13 +73,18 @@
         topMenus:[{"name":"首页","href":"/"}]
       }
     },
-    beforeMount:function(){
-      var now_router = this.$router.history.current.name;
-      console.log(now_router);
-      this.user = {"username":"lgq"};
-      this.imgPhoto = Web.getSrc('/index/img/gaga.jpg');
-      this.$router.push("/")
-      this.init();
+    mounted:function(){
+      var that = this;
+      layui.use('element', function(){
+        var element = layui.element;
+        element.on('tab(top_tab)', function(data){
+          that.goTopMenu(data.index);
+        });
+      });
+      that.user = {"username":"lgq"};
+      that.imgPhoto = Web.getSrc('/index/img/gaga.jpg');
+      that.$router.push("/")
+      that.init();
     },
     methods: {
       init:function(){
@@ -109,15 +111,7 @@
         that.chooseTopIndex = index;
         that.$router.push(that.topMenus[that.chooseTopIndex].href);
         that.$forceUpdate();
-      },
-      deleteTopMenu:function(index){
-        var that = this;
-        if(index > 0){
-          that.chooseTopIndex = index-1;
-          that.topMenus.splice(index,1);
-        }
-        that.$router.push(that.topMenus[that.chooseTopIndex].href);
-        that.$forceUpdate();
+
       },
       goMenu:function (href,name) {
         var that = this;

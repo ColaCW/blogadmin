@@ -127,3 +127,59 @@ img {
     height: auto;
     margin: auto;
 }
+
+/*遮罩层*/
+.wrap{
+  width: 100%;
+  height: 100%;
+  background-color: rgb(0, 0, 0);
+  opacity: 0.3;
+  z-index: 99;
+  position: absolute;
+  top: 0;
+  display: none;
+}
+
+.search-box{
+  display: none;
+  position: absolute;
+  width: 460px;
+  top: 30%;
+  left: 40%;
+  background-color: white;
+  z-index: 100;
+  padding: 10px 20px;
+}
+
+.box-head{
+  margin-bottom: 20px;
+}
+.box-head .head-title{
+  font-weight: bold;
+  font-size: 18px;
+  width: 95%;
+  text-align: center;
+  float: left;
+}
+.box-head .close{
+  float: right;
+  text-align: right;
+  cursor: pointer;
+}
+.box-head .close img:hover{
+  animation: myrotate .5s infinite linear;
+}
+@keyframes myrotate {
+  0% {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -m-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -m-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
