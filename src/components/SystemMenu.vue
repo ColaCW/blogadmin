@@ -7,9 +7,6 @@
       <button class="layui-btn">
         <i class="layui-icon">&#xe608;</i> 添加
       </button>
-      <button class="layui-btn" @click="relaod()">
-        <i class="layui-icon">&#xe669;</i> 刷新
-      </button>
     </div>
     <table class="layui-hide" id="SystemMenu" :lay-filter="home"></table>
     <script type="text/html" id="operation">
