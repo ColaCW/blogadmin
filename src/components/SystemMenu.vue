@@ -4,7 +4,7 @@
       <button class="layui-btn" @click="showBox('.search-box')">
         <i class="layui-icon">&#xe615;</i> 搜索
       </button>
-      <button class="layui-btn">
+      <button class="layui-btn" @click="editObj = initialObj;showBox('.edit-box')">
         <i class="layui-icon">&#xe608;</i> 添加
       </button>
     </div>
@@ -35,6 +35,9 @@
         <button class="layui-btn" @click="closeBox('.search-box')">取消</button>
       </div>
     </div>
+    <div class="edit-box">
+      111
+    </div>
     <div class="wrap"></div>
   </div>
 </template>
@@ -61,9 +64,21 @@
         tableData:null,
         page:1,
         pageSize:10,
-        obj:{
+        //编辑对象
+        editObj:{},
+        //初始对象
+        initialObj:{
           id:"",
-          name:""
+          parentId:"",
+          name:"",
+          href:"",
+          hide:"",
+          remark:"",
+          seq:"",
+          createAt:"",
+          createBy:"",
+          updateAt:"",
+          updateBy:""
         }
       }
     },
@@ -114,7 +129,8 @@
               }
             });
           } else if(obj.event === 'edit'){
-            layer.alert('编辑行：<br>'+ JSON.stringify(data))
+            that.editObj = data;
+            that.showBox('.edit-box');
           }
         });
       });
