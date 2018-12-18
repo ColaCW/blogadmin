@@ -52,7 +52,7 @@
             <label>ID:</label>
           </div>
           <div class="layui-col-md9">
-            <input type="text" v-model="obj.id"/>
+            <input type="text" v-model="obj.id" readonly="TRUE"/>
           </div>
         </div>
         <div class="layui-col-md6">
