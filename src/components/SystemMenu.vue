@@ -1,5 +1,6 @@
 <template>
   <div>
+
     <div style="margin-top: 10px;padding-left: 20px;">
       <button class="layui-btn" @click="showBox('.search-box')">
         <i class="layui-icon">&#xe615;</i> 搜索
@@ -11,6 +12,7 @@
         <i class="layui-icon">&#x1006;</i> 删除
       </button>
     </div>
+
     <table class="layui-hide" id="SystemMenu" :lay-filter="home"></table>
     <script type="text/html" id="operation">
       <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
@@ -60,7 +62,11 @@
             <label>父节点:</label>
           </div>
           <div class="layui-col-md9">
-            <input type="text" v-model="obj.parentId"/>
+            <select style="width: 86%" v-model="obj.parentId" v-if="menus.length > 0">
+              <template v-for="menu in menus" v-if="menu.parentId == 0 && menu.hide === 0">
+                <option :value="menu.id">{{menu.name}}</option>
+              </template>
+            </select>
           </div>
         </div>
         <div style="clear: both"></div>
@@ -90,7 +96,10 @@
             <label>是否隐藏:</label>
           </div>
           <div class="layui-col-md9">
-            <input type="text" v-model="obj.hide"/>
+            <select v-model="obj.hide" style="width: 86%">
+              <option value="0">否</option>
+              <option value="1">是</option>
+            </select>
           </div>
         </div>
         <div class="layui-col-md6">
@@ -140,7 +149,11 @@
             <label>父节点:</label>
           </div>
           <div class="layui-col-md9">
-            <input type="text" v-model="obj.parentId"/>
+            <select style="width: 86%" v-model="obj.parentId" v-if="menus.length > 0">
+              <template v-for="menu in menus" v-if="menu.parentId == 0 && menu.hide === 0">
+                <option :value="menu.id">{{menu.name}}</option>
+              </template>
+            </select>
           </div>
         </div>
         <div style="clear: both"></div>
@@ -159,7 +172,10 @@
             <label>是否隐藏:</label>
           </div>
           <div class="layui-col-md9">
-            <input type="text" v-model="obj.hide"/>
+            <select v-model="obj.hide" style="width: 86%">
+              <option value="0">否</option>
+              <option value="1">是</option>
+            </select>
           </div>
         </div>
         <div style="clear: both"></div>
@@ -206,7 +222,13 @@
           ,{field:'id', title: 'ID', sort: true}
           ,{field:'name', title: '名称'}
           ,{field:'href', title: '链接'}
-          ,{field:'hide', title: '隐藏'}
+          ,{field:'hide', title: '隐藏',templet: function (d) {
+            if(d.hide === 0){
+              return "否";
+            }else if(d.hide === 1){
+              return "是";
+            }
+            }}
           ,{field:'remark', title: '备注'}
           ,{field:'seq', title: '排序', sort: true}
           ,{ align:'center', toolbar: '#operation', title: '操作'}
@@ -214,6 +236,7 @@
         tableData:null,
         page:1,
         pageSize:10,
+        menus:[],
         //编辑对象
         obj:{
           id:"",
@@ -308,6 +331,7 @@
           }
         });
       });
+      that.menus = Web.getValue("menus");
     },
     methods: {
       doCreate:function () {

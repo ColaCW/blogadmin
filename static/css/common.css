@@ -120,10 +120,13 @@ textarea {
     outline: medium none;
 }
 
+input{
+  padding-left: 5px !important;
+}
+
 img {
     vertical-align: middle;
     max-width: 100%;
-    /*    display: block;*/
     height: auto;
     margin: auto;
 }

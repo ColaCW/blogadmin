@@ -83,7 +83,7 @@
       });
       that.user = {"username":"lgq"};
       that.imgPhoto = Web.getSrc('/index/img/gaga.jpg');
-      that.$router.push("/")
+      that.$router.push("/");
       that.init();
     },
     methods: {
@@ -97,6 +97,7 @@
           if(res.status){
             if(that.page == 0){
               that.menus = res.data;
+              Web.setValue("menus",that.menus);
             }else{
               that.menus = res.data.content
             }
