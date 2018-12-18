@@ -4,7 +4,7 @@
       <button class="layui-btn" @click="showBox('.search-box')">
         <i class="layui-icon">&#xe615;</i> 搜索
       </button>
-      <button class="layui-btn" @click="editObj = initialObj;showBox('.edit-box')">
+      <button class="layui-btn" @click="editObj = initialObj;showBox('.create-box')">
         <i class="layui-icon">&#xe608;</i> 添加
       </button>
     </div>
@@ -18,15 +18,16 @@
         <div class="head-title">搜索</div>
         <div class="close"><img src="../../static/img/close.png" style="width: 20px;" @click="closeBox('.search-box')"/></div>
         <div style="clear: both"></div>
+        <hr style="width: 100%;height: 1px;padding: 0;background-color: #b1a9a9;"/>
       </div>
       <div>
         <div class="layui-col-md6">
           <label>ID:</label>
-          <input type="text" v-model="obj.id"/>
+          <input type="text" v-model="editObj.id"/>
         </div>
         <div class="layui-col-md6">
           <label>Name:</label>
-          <input type="text" v-model="obj.name"/>
+          <input type="text" v-model="editObj.name"/>
         </div>
         <div style="clear: both"></div>
       </div>
@@ -36,7 +37,164 @@
       </div>
     </div>
     <div class="edit-box">
-      111
+      <div class="box-head">
+        <div class="head-title">编辑</div>
+        <div class="close"><img src="../../static/img/close.png" style="width: 20px;" @click="closeBox('.edit-box')"/></div>
+        <div style="clear: both"></div>
+        <hr style="width: 100%;height: 1px;padding: 0;background-color: #b1a9a9;"/>
+      </div>
+      <div style="margin-top:10px">
+        <div class="layui-col-md6">
+          <div class="layui-col-md3">
+            <label>ID:</label>
+          </div>
+          <div class="layui-col-md9">
+            <input type="text" v-model="editObj.id"/>
+          </div>
+        </div>
+        <div class="layui-col-md6">
+          <div class="layui-col-md3">
+            <label>父节点:</label>
+          </div>
+          <div class="layui-col-md9">
+            <input type="text" v-model="editObj.parentId"/>
+          </div>
+        </div>
+        <div style="clear: both"></div>
+      </div>
+      <div style="margin-top:10px">
+        <div class="layui-col-md6">
+          <div class="layui-col-md3">
+            <label>名称:</label>
+          </div>
+          <div class="layui-col-md9">
+            <input type="text" v-model="editObj.name"/>
+          </div>
+        </div>
+        <div class="layui-col-md6">
+          <div class="layui-col-md3">
+            <label>链接:</label>
+          </div>
+          <div class="layui-col-md9">
+            <input type="text" v-model="editObj.href"/>
+          </div>
+        </div>
+        <div style="clear: both"></div>
+      </div>
+      <div style="margin-top:10px">
+        <div class="layui-col-md6">
+          <div class="layui-col-md3">
+            <label>是否隐藏:</label>
+          </div>
+          <div class="layui-col-md9">
+            <input type="text" v-model="editObj.hide"/>
+          </div>
+        </div>
+        <div class="layui-col-md6">
+          <div class="layui-col-md3">
+            <label>备注:</label>
+          </div>
+          <div class="layui-col-md9">
+            <input type="text" v-model="editObj.remark"/>
+          </div>
+        </div>
+        <div style="clear: both"></div>
+      </div>
+      <div style="margin-top:10px">
+        <div class="layui-col-md6">
+          <div class="layui-col-md3">
+            <label>排序:</label>
+          </div>
+          <div class="layui-col-md9">
+            <input type="text" v-model="editObj.seq"/>
+          </div>
+        </div>
+        <div style="clear: both"></div>
+      </div>
+      <div style="text-align: center;margin-top: 30px;">
+        <button class="layui-btn sureBtn" @click="doUpdate()">修改</button>
+        <button class="layui-btn" @click="closeBox('.edit-box')">取消</button>
+      </div>
+    </div>
+    <div class="create-box">
+      <div class="box-head">
+        <div class="head-title">新建</div>
+        <div class="close"><img src="../../static/img/close.png" style="width: 20px;" @click="closeBox('.create-box')"/></div>
+        <div style="clear: both"></div>
+        <hr style="width: 100%;height: 1px;padding: 0;background-color: #b1a9a9;"/>
+      </div>
+      <div style="margin-top:10px">
+        <div class="layui-col-md6">
+          <div class="layui-col-md3">
+            <label>ID:</label>
+          </div>
+          <div class="layui-col-md9">
+            <input type="text" v-model="editObj.id"/>
+          </div>
+        </div>
+        <div class="layui-col-md6">
+          <div class="layui-col-md3">
+            <label>父节点:</label>
+          </div>
+          <div class="layui-col-md9">
+            <input type="text" v-model="editObj.parentId"/>
+          </div>
+        </div>
+        <div style="clear: both"></div>
+      </div>
+      <div style="margin-top:10px">
+        <div class="layui-col-md6">
+          <div class="layui-col-md3">
+            <label>名称:</label>
+          </div>
+          <div class="layui-col-md9">
+            <input type="text" v-model="editObj.name"/>
+          </div>
+        </div>
+        <div class="layui-col-md6">
+          <div class="layui-col-md3">
+            <label>链接:</label>
+          </div>
+          <div class="layui-col-md9">
+            <input type="text" v-model="editObj.href"/>
+          </div>
+        </div>
+        <div style="clear: both"></div>
+      </div>
+      <div style="margin-top:10px">
+        <div class="layui-col-md6">
+          <div class="layui-col-md3">
+            <label>是否隐藏:</label>
+          </div>
+          <div class="layui-col-md9">
+            <input type="text" v-model="editObj.hide"/>
+          </div>
+        </div>
+        <div class="layui-col-md6">
+          <div class="layui-col-md3">
+            <label>备注:</label>
+          </div>
+          <div class="layui-col-md9">
+            <input type="text" v-model="editObj.remark"/>
+          </div>
+        </div>
+        <div style="clear: both"></div>
+      </div>
+      <div style="margin-top:10px">
+        <div class="layui-col-md6">
+          <div class="layui-col-md3">
+            <label>排序:</label>
+          </div>
+          <div class="layui-col-md9">
+            <input type="text" v-model="editObj.seq"/>
+          </div>
+        </div>
+        <div style="clear: both"></div>
+      </div>
+      <div style="text-align: center;margin-top: 30px;">
+        <button class="layui-btn sureBtn" @click="doCreate()">创建</button>
+        <button class="layui-btn" @click="closeBox('.create-box')">取消</button>
+      </div>
     </div>
     <div class="wrap"></div>
   </div>
@@ -50,7 +208,7 @@
     data () {
       return {
         home:"SystemMenu",
-        token:Web.getToken(),
+        token:"S5zadQHNC4",
         cols:[
           {type:'checkbox'}
           ,{field:'id', title: 'ID', sort: true}
@@ -91,7 +249,7 @@
           url:Web.host + "/api/"+ that.home + "/search.do",
           method:"post",
           contentType: 'application/json',
-          where:{id:that.obj.id,name:that.obj.name},
+          where:{id:that.editObj.id,name:that.editObj.name},
           cols: [that.cols],
           page: true,
           request: {
@@ -130,14 +288,27 @@
             });
           } else if(obj.event === 'edit'){
             that.editObj = data;
-            that.showBox('.edit-box');
+            $('.edit-box').show();
+            $(".wrap").show()
           }
         });
       });
     },
     methods: {
-      doCreate:function (obj) {
-
+      doCreate:function () {
+        var that = this;
+        var data = {
+          token:that.token,
+          obj:that.editObj
+        }
+        Web.post(Web.host + "/api/"+ that.home + "/create.do",data,function (res) {
+          if(res.status){
+            Web.showMessage("添加成功",2000);
+            that.doSearch();
+          }else{
+            layer.alert("添加失败");
+          }
+        })
       },
       doDelete:function(id,callback){
         var that = this;
@@ -156,17 +327,27 @@
             }
         })
       },
-      doUpdate:function(obj){
-
-      },
-      doRead:function(id){
+      doUpdate:function(){
+        var that = this;
+        var data = {
+          token:that.token,
+          obj:that.editObj
+        }
+        Web.post(Web.host + "/api/"+ that.home + "/update.do",data,function (res) {
+          if(res.status){
+            Web.showMessage("修改成功",2000);
+            that.closeBox(".edit-box");
+          }else{
+            layer.alert("修改失败");
+          }
+        })
       },
       doSearch:function () {
         var that = this;
         that.tableData.reload({
           where: {
-            id:that.obj.id,
-            name:that.obj.name
+            id:that.editObj.id,
+            name:that.editObj.name
           },
           page: {
             curr: 1
@@ -183,8 +364,10 @@
         });
       },
       showBox:function (boxClassName) {
+        var that = this;
+        that.editObj = that.initialObj;
         $(boxClassName).show();
-        $(".wrap").show()
+        $(".wrap").show();
       },
       closeBox:function (boxClassName) {
         $(boxClassName).hide();
