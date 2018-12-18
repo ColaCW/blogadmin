@@ -21,11 +21,11 @@
     <div class="layui-side layui-bg-black">
       <div class="layui-side-scroll">
         <ul class="layui-nav layui-nav-tree" layui-filter="main_nav" id="nav">
-          <template v-for="(menu,index) in menus" v-if="menu.parentId == 0">
+          <template v-for="(menu,index) in menus" v-if="menu.parentId == 0 && menu.hide === 0">
             <li :class="index == 0 ? 'layui-nav-item layui-nav-itemed' : 'layui-nav-item'">
               <a href="javascript:;"><i class="layui-icon">&#xe68e;</i>&nbsp;&nbsp;{{menu.name}}</a>
               <dl class="layui-nav-child">
-                <template v-for="menu1 in menus" v-if="menu1.parentId == menu.id">
+                <template v-for="menu1 in menus" v-if="menu1.parentId == menu.id && menu1.hide === 0">
                   <dd><a href="javascript:;" @click="goMenu(menu1.href,menu1.name)">&nbsp;&nbsp;{{menu1.name}}</a></dd>
                 </template>
               </dl>

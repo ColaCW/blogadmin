@@ -4,8 +4,11 @@
       <button class="layui-btn" @click="showBox('.search-box')">
         <i class="layui-icon">&#xe615;</i> 搜索
       </button>
-      <button class="layui-btn" @click="editObj = initialObj;showBox('.create-box')">
+      <button class="layui-btn" @click="showBox('.create-box')">
         <i class="layui-icon">&#xe608;</i> 添加
+      </button>
+      <button class="layui-btn" @click="deleteAll()">
+        <i class="layui-icon">&#x1006;</i> 删除
       </button>
     </div>
     <table class="layui-hide" id="SystemMenu" :lay-filter="home"></table>
@@ -23,11 +26,11 @@
       <div>
         <div class="layui-col-md6">
           <label>ID:</label>
-          <input type="text" v-model="editObj.id"/>
+          <input type="text" v-model="obj.id"/>
         </div>
         <div class="layui-col-md6">
           <label>Name:</label>
-          <input type="text" v-model="editObj.name"/>
+          <input type="text" v-model="obj.name"/>
         </div>
         <div style="clear: both"></div>
       </div>
@@ -43,13 +46,13 @@
         <div style="clear: both"></div>
         <hr style="width: 100%;height: 1px;padding: 0;background-color: #b1a9a9;"/>
       </div>
-      <div style="margin-top:10px">
+      <div style="margin: 20px 0;">
         <div class="layui-col-md6">
           <div class="layui-col-md3">
             <label>ID:</label>
           </div>
           <div class="layui-col-md9">
-            <input type="text" v-model="editObj.id"/>
+            <input type="text" v-model="obj.id"/>
           </div>
         </div>
         <div class="layui-col-md6">
@@ -57,18 +60,18 @@
             <label>父节点:</label>
           </div>
           <div class="layui-col-md9">
-            <input type="text" v-model="editObj.parentId"/>
+            <input type="text" v-model="obj.parentId"/>
           </div>
         </div>
         <div style="clear: both"></div>
       </div>
-      <div style="margin-top:10px">
+      <div style="margin: 20px 0;">
         <div class="layui-col-md6">
           <div class="layui-col-md3">
             <label>名称:</label>
           </div>
           <div class="layui-col-md9">
-            <input type="text" v-model="editObj.name"/>
+            <input type="text" v-model="obj.name"/>
           </div>
         </div>
         <div class="layui-col-md6">
@@ -76,18 +79,18 @@
             <label>链接:</label>
           </div>
           <div class="layui-col-md9">
-            <input type="text" v-model="editObj.href"/>
+            <input type="text" v-model="obj.href"/>
           </div>
         </div>
         <div style="clear: both"></div>
       </div>
-      <div style="margin-top:10px">
+      <div style="margin: 20px 0;">
         <div class="layui-col-md6">
           <div class="layui-col-md3">
             <label>是否隐藏:</label>
           </div>
           <div class="layui-col-md9">
-            <input type="text" v-model="editObj.hide"/>
+            <input type="text" v-model="obj.hide"/>
           </div>
         </div>
         <div class="layui-col-md6">
@@ -95,18 +98,18 @@
             <label>备注:</label>
           </div>
           <div class="layui-col-md9">
-            <input type="text" v-model="editObj.remark"/>
+            <input type="text" v-model="obj.remark"/>
           </div>
         </div>
         <div style="clear: both"></div>
       </div>
-      <div style="margin-top:10px">
+      <div style="margin: 20px 0;">
         <div class="layui-col-md6">
           <div class="layui-col-md3">
             <label>排序:</label>
           </div>
           <div class="layui-col-md9">
-            <input type="text" v-model="editObj.seq"/>
+            <input type="text" v-model="obj.seq"/>
           </div>
         </div>
         <div style="clear: both"></div>
@@ -123,13 +126,13 @@
         <div style="clear: both"></div>
         <hr style="width: 100%;height: 1px;padding: 0;background-color: #b1a9a9;"/>
       </div>
-      <div style="margin-top:10px">
+      <div style="margin: 20px 0;">
         <div class="layui-col-md6">
           <div class="layui-col-md3">
-            <label>ID:</label>
+            <label>名称:</label>
           </div>
           <div class="layui-col-md9">
-            <input type="text" v-model="editObj.id"/>
+            <input type="text" v-model="obj.name"/>
           </div>
         </div>
         <div class="layui-col-md6">
@@ -137,56 +140,45 @@
             <label>父节点:</label>
           </div>
           <div class="layui-col-md9">
-            <input type="text" v-model="editObj.parentId"/>
+            <input type="text" v-model="obj.parentId"/>
           </div>
         </div>
         <div style="clear: both"></div>
       </div>
-      <div style="margin-top:10px">
-        <div class="layui-col-md6">
-          <div class="layui-col-md3">
-            <label>名称:</label>
-          </div>
-          <div class="layui-col-md9">
-            <input type="text" v-model="editObj.name"/>
-          </div>
-        </div>
+      <div style="margin: 20px 0;">
         <div class="layui-col-md6">
           <div class="layui-col-md3">
             <label>链接:</label>
           </div>
           <div class="layui-col-md9">
-            <input type="text" v-model="editObj.href"/>
+            <input type="text" v-model="obj.href"/>
           </div>
         </div>
-        <div style="clear: both"></div>
-      </div>
-      <div style="margin-top:10px">
         <div class="layui-col-md6">
           <div class="layui-col-md3">
             <label>是否隐藏:</label>
           </div>
           <div class="layui-col-md9">
-            <input type="text" v-model="editObj.hide"/>
+            <input type="text" v-model="obj.hide"/>
           </div>
         </div>
+        <div style="clear: both"></div>
+      </div>
+      <div style="margin: 20px 0;">
         <div class="layui-col-md6">
           <div class="layui-col-md3">
             <label>备注:</label>
           </div>
           <div class="layui-col-md9">
-            <input type="text" v-model="editObj.remark"/>
+            <input type="text" v-model="obj.remark"/>
           </div>
         </div>
-        <div style="clear: both"></div>
-      </div>
-      <div style="margin-top:10px">
         <div class="layui-col-md6">
           <div class="layui-col-md3">
             <label>排序:</label>
           </div>
           <div class="layui-col-md9">
-            <input type="text" v-model="editObj.seq"/>
+            <input type="text" v-model="obj.seq"/>
           </div>
         </div>
         <div style="clear: both"></div>
@@ -223,9 +215,7 @@
         page:1,
         pageSize:10,
         //编辑对象
-        editObj:{},
-        //初始对象
-        initialObj:{
+        obj:{
           id:"",
           parentId:"",
           name:"",
@@ -236,8 +226,12 @@
           createAt:"",
           createBy:"",
           updateAt:"",
-          updateBy:""
-        }
+          updateBy:"",
+          deleteAt:"",
+          deleteBy:"0"
+        },
+        allData:[],//总数据
+        chooseArray:[],//复选框选中数据
       }
     },
     mounted:function(){
@@ -249,7 +243,7 @@
           url:Web.host + "/api/"+ that.home + "/search.do",
           method:"post",
           contentType: 'application/json',
-          where:{id:that.editObj.id,name:that.editObj.name},
+          where:{id:that.obj.id,name:that.obj.name},
           cols: [that.cols],
           page: true,
           request: {
@@ -263,9 +257,15 @@
             return {
               "code": res.status, //解析接口状态
               "msg": res.message, //解析提示文本
-              "count": res.data.numberOfElements, //解析数据长度
+              "count": res.data.totalElements, //解析数据长度
               "data": res.data.content //解析数据列表
             };
+          },
+          done:function (res,curr) {
+            if(res.code){
+              that.allData = res.data;
+              that.page = curr
+            }
           }
         });
         table.on('tool('+ that.home +')', function(obj){
@@ -278,7 +278,7 @@
               btn: ['确定', '取消'],
               yes: function(index){
                 that.doDelete(data.id,function () {
-                  obj.del();
+                  that.doSearch();
                   layer.close(index);
                 });
               },
@@ -287,9 +287,24 @@
               }
             });
           } else if(obj.event === 'edit'){
-            that.editObj = data;
+            that.obj = data;
             $('.edit-box').show();
             $(".wrap").show()
+          }
+        });
+        table.on('checkbox('+ that.home +')', function(obj){
+          if(obj.type == 'one'){
+            if(obj.checked){
+              that.chooseArray.push(obj.data)
+            }else{
+              Web.removeObj(obj.data,that.chooseArray);
+            }
+          }else if(obj.type == 'all'){
+            if(obj.checked){
+              that.chooseArray = that.allData;
+            }else{
+              that.chooseArray = [];
+            }
           }
         });
       });
@@ -299,11 +314,27 @@
         var that = this;
         var data = {
           token:that.token,
-          obj:that.editObj
+          obj:that.obj
         }
         Web.post(Web.host + "/api/"+ that.home + "/create.do",data,function (res) {
           if(res.status){
             Web.showMessage("添加成功",2000);
+            that.closeBox(".create-box");
+            that.obj = {
+              id:"",
+              parentId:"",
+              name:"",
+              href:"",
+              hide:"",
+              remark:"",
+              seq:"",
+              createAt:"",
+              createBy:"",
+              updateAt:"",
+              updateBy:"",
+              deleteAt:"",
+              deleteBy:"0"
+            };
             that.doSearch();
           }else{
             layer.alert("添加失败");
@@ -327,16 +358,50 @@
             }
         })
       },
+      deleteAll: function () {
+        var that = this;
+        if (that.chooseArray.length == 0) {
+          Web.showMessage("请选择要删除的数据", 2000);
+          return
+        }
+        var ids = "";
+        for (var i = 0; i < that.chooseArray.length; i++) {
+          if (i > 0) {
+            ids += ","
+          }
+          ids += that.chooseArray[i].id
+        }
+        that.doDelete(ids, function () {
+          Web.showMessage("删除成功", 2000);
+          that.doSearch();
+        })
+      },
       doUpdate:function(){
         var that = this;
         var data = {
           token:that.token,
-          obj:that.editObj
+          obj:that.obj
         }
         Web.post(Web.host + "/api/"+ that.home + "/update.do",data,function (res) {
           if(res.status){
             Web.showMessage("修改成功",2000);
             that.closeBox(".edit-box");
+            that.obj = {
+              id:"",
+              parentId:"",
+              name:"",
+              href:"",
+              hide:"",
+              remark:"",
+              seq:"",
+              createAt:"",
+              createBy:"",
+              updateAt:"",
+              updateBy:"",
+              deleteAt:"",
+              deleteBy:"0"
+            };
+            that.doSearch();
           }else{
             layer.alert("修改失败");
           }
@@ -344,16 +409,16 @@
       },
       doSearch:function () {
         var that = this;
+        that.chooseArray = [];
         that.tableData.reload({
           where: {
-            id:that.editObj.id,
-            name:that.editObj.name
+            id:that.obj.id,
+            name:that.obj.name
           },
           page: {
-            curr: 1
+            curr: that.page
           },
           done: function(res){
-            console.log(res)
             if(res.code){
               $(".search-box").hide();
               $(".wrap").hide()
@@ -362,10 +427,25 @@
             }
           }
         });
+        that.$forceUpdate();
       },
       showBox:function (boxClassName) {
         var that = this;
-        that.editObj = that.initialObj;
+        that.obj = {
+          id:"",
+          parentId:"",
+          name:"",
+          href:"",
+          hide:"",
+          remark:"",
+          seq:"",
+          createAt:"",
+          createBy:"",
+          updateAt:"",
+          updateBy:"",
+          deleteAt:"",
+          deleteBy:"0"
+        };
         $(boxClassName).show();
         $(".wrap").show();
       },

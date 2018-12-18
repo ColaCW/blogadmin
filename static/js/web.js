@@ -130,6 +130,32 @@ var Web = {
     return s;
   },
 
+  removeObj:function(obj,list){
+    var index = -1;
+    if(list && list.length != 0){
+      for(var i = 0;i<list.length;i++){
+        if(Web.equalObj(obj,list[i])){
+          index = i;
+          break;
+        }
+      }
+      if(index != -1){
+        list.splice(index,1);
+      }
+      return list;
+    }
+    return null;
+  },
+
+  equalObj:function(obj1,obj2){
+    if(obj1 && obj2){
+      if(JSON.stringify(obj1) == JSON.stringify(obj2)){
+        return true;
+      }
+    }
+    return false;
+  },
+
   showMessage: function(msg, duration) {
     duration = isNaN(duration) ? 3000 : duration;
     var m = document.createElement('div');
