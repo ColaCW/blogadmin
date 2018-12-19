@@ -5,7 +5,7 @@
       <button class="layui-btn" @click="showBox('.search-box')">
         <i class="layui-icon">&#xe615;</i> 搜索
       </button>
-      <button class="layui-btn" @click="showBox('.edit-box')">
+      <button class="layui-btn" @click="goAddBlog('')">
         <i class="layui-icon">&#xe608;</i> 添加
       </button>
       <button class="layui-btn" @click="deleteAll()">
@@ -53,7 +53,8 @@
             <label>名称:</label><input type="text" v-model="obj.name"/>
         </div>
         <div>
-          <label>预览:</label><div style="width: 700px;height: 250px;" id="result"></div>
+          <label style="float: left;">预览:</label><div style="width: 700px;height: 250px;float:left;border: 0.1px solid #A9A9A9;" id="result"></div>
+          <div style="clear: both"></div>
         </div>
         <div>
           <label>markdown:</label><textarea style="width: 700px;height: 250px;" id="content" @keyup="compile()"></textarea>
@@ -214,6 +215,9 @@
           deleteAt:"",
           deleteBy:"0"
         };
+      },
+      goAddBlog:function(id){
+        window.open("static/addBlog.html?id="+id);
       },
       doCreate:function () {
         var that = this;

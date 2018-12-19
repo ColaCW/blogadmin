@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="shortcut icon" type="image/x-icon" href="/static/img/gaga.jpg">
+  <title>编辑博客</title>
+  <link rel="stylesheet" href="/static/css/common.css"/>
+</head>
+<body>
+<div>
+  <textarea id="content" style="height:400px;width:600px;" onkeyup="compile()"></textarea>
+  <div id="result"></div>
+</div>
+<script type="text/javascript" src="/static/js/jquery.min.js"></script>
+<script type="text/javascript" src="/static/js/store.min.js"></script>
+<script type="text/javascript" src="/static/js/vue.min.js"></script>
+<script type="text/javascript" src="/static/js/showdown.js"></script>
+<script type="text/javascript">
+  var app = new Vue({
+    data:{
+      id:""
+    },
+    methods:{
+      init:function () {
+        var that = this;
+        that.id = that.getParam("","id","");
+        console.log(that.id)
+      },
+      getParam: function (url, name, defaultValue) {
+        if (typeof (url) == 'undefined' || !url) {
+          url = window.location.search.substr(1);
+        }
+        var i = url.indexOf('#');
+        if (i != -1) {
+          url = url.substring(0, i);
+        }
+        i = url.indexOf('?');
+        if (i != -1) {
+          url = url.substring(i + 1);
+        }
+        url = '&' + url + '&';
+        var key = '&' + name + '=';
+        var i = url.indexOf(key);
+        if (i != -1) {
+          var j = url.indexOf('&', i + key.length);
+          if (j != -1) {
+            return url.substring(i + key.length, j);
+          }
+        }
+        return defaultValue;
+      },
+    }
+  })
+  app.init();
+  function compile() {
+    var text = document.getElementById("content").value;
+    var converter = new showdown.Converter();
+    var html = converter.makeHtml(text);
+    document.getElementById("result").innerHTML = html;
+  }
+</script>
+</body>
+</html>
