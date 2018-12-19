@@ -1,0 +1,17 @@
+.edit-box{
+  display: none;
+  position: absolute;
+  width: 1100px;
+  top: 3%;
+  left: 15%;
+  background-color: white;
+  z-index: 100;
+  padding: 10px 20px;
+  border-radius: 3px;
+  min-height: 750px;
+}
+::-webkit-scrollbar
+{
+  width: 0px;
+  height: 0px;
+}

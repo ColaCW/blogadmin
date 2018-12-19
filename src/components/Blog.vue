@@ -2,10 +2,10 @@
   <div>
 
     <div style="margin-top: 10px;padding-left: 20px;">
-      <button class="layui-btn" @click="">
+      <button class="layui-btn" @click="showBox('.search-box')">
         <i class="layui-icon">&#xe615;</i> 搜索
       </button>
-      <button class="layui-btn" @click="addBlog()">
+      <button class="layui-btn" @click="showBox('.edit-box')">
         <i class="layui-icon">&#xe608;</i> 添加
       </button>
       <button class="layui-btn" @click="deleteAll()">
@@ -41,74 +41,22 @@
         <button class="layui-btn" @click="closeBox('.search-box')">取消</button>
       </div>
     </div>
-    <div class="create-box">
+    <div class="edit-box">
       <div class="box-head">
-        <div class="head-title">新建</div>
-        <div class="close"><img src="../../static/img/close.png" style="width: 20px;" @click="closeBox('.create-box')"/></div>
+        <div class="head-title"><template v-if="obj.id == ''">新建</template><template v-else>编辑</template></div>
+        <div class="close"><img src="../../static/img/close.png" style="width: 20px;" @click="closeBox('.edit-box')"/></div>
         <div style="clear: both"></div>
         <hr style="width: 100%;height: 1px;padding: 0;background-color: #b1a9a9;"/>
       </div>
-      <div style="margin: 20px 0;">
-        <div class="layui-col-md6">
-          <div class="layui-col-md3">
-            <label>名称:</label>
-          </div>
-          <div class="layui-col-md9">
-            <input type="text" v-model="obj.name"/>
-          </div>
+      <div style="margin: 20px auto;width: 800px;">
+        <div>
+            <label>名称:</label><input type="text" v-model="obj.name"/>
         </div>
-        <div class="layui-col-md6">
-          <div class="layui-col-md3">
-            <label>父节点:</label>
-          </div>
-          <div class="layui-col-md9">
-            <select style="width: 86%" v-model="obj.parentId" v-if="menus.length > 0">
-              <template v-for="menu in menus" v-if="menu.parentId == 0 && menu.hide === 0">
-                <option :value="menu.id">{{menu.name}}</option>
-              </template>
-            </select>
-          </div>
+        <div>
+          <label>预览:</label><div style="width: 700px;height: 250px;" id="result"></div>
         </div>
-        <div style="clear: both"></div>
-      </div>
-      <div style="margin: 20px 0;">
-        <div class="layui-col-md6">
-          <div class="layui-col-md3">
-            <label>链接:</label>
-          </div>
-          <div class="layui-col-md9">
-            <input type="text" v-model="obj.href"/>
-          </div>
-        </div>
-        <div class="layui-col-md6">
-          <div class="layui-col-md3">
-            <label>是否隐藏:</label>
-          </div>
-          <div class="layui-col-md9">
-            <select v-model="obj.hide" style="width: 86%">
-              <option value="0">否</option>
-              <option value="1">是</option>
-            </select>
-          </div>
-        </div>
-        <div style="clear: both"></div>
-      </div>
-      <div style="margin: 20px 0;">
-        <div class="layui-col-md6">
-          <div class="layui-col-md3">
-            <label>备注:</label>
-          </div>
-          <div class="layui-col-md9">
-            <input type="text" v-model="obj.remark"/>
-          </div>
-        </div>
-        <div class="layui-col-md6">
-          <div class="layui-col-md3">
-            <label>排序:</label>
-          </div>
-          <div class="layui-col-md9">
-            <input type="text" v-model="obj.seq"/>
-          </div>
+        <div>
+          <label>markdown:</label><textarea style="width: 700px;height: 250px;" id="content" @keyup="compile()"></textarea>
         </div>
         <div style="clear: both"></div>
       </div>
@@ -120,7 +68,9 @@
     <div class="wrap"></div>
   </div>
 </template>
-
+<style>
+  @import "../../static/css/blog.css";
+</style>
 <script>
 
   import { Web } from "../../static/js/web.js";
@@ -247,8 +197,23 @@
       that.menus = Web.getValue("menus");
     },
     methods: {
-      addBlog:function(){
-        window.open("/static/addBlog.html");
+      initObj:function(){
+        var that = this;
+        that.obj = {
+          id:"",
+          parentId:"",
+          name:"",
+          href:"",
+          hide:"",
+          remark:"",
+          seq:"",
+          createAt:"",
+          createBy:"",
+          updateAt:"",
+          updateBy:"",
+          deleteAt:"",
+          deleteBy:"0"
+        };
       },
       doCreate:function () {
         var that = this;
@@ -260,21 +225,7 @@
           if(res.status){
             Web.showMessage("添加成功",2000);
             that.closeBox(".create-box");
-            that.obj = {
-              id:"",
-              parentId:"",
-              name:"",
-              href:"",
-              hide:"",
-              remark:"",
-              seq:"",
-              createAt:"",
-              createBy:"",
-              updateAt:"",
-              updateBy:"",
-              deleteAt:"",
-              deleteBy:"0"
-            };
+            that.initObj();
             that.doSearch();
           }else{
             layer.alert("添加失败");
@@ -326,21 +277,7 @@
           if(res.status){
             Web.showMessage("修改成功",2000);
             that.closeBox(".edit-box");
-            that.obj = {
-              id:"",
-              parentId:"",
-              name:"",
-              href:"",
-              hide:"",
-              remark:"",
-              seq:"",
-              createAt:"",
-              createBy:"",
-              updateAt:"",
-              updateBy:"",
-              deleteAt:"",
-              deleteBy:"0"
-            };
+            that.initObj();
             that.doSearch();
           }else{
             layer.alert("修改失败");
@@ -371,27 +308,19 @@
       },
       showBox:function (boxClassName) {
         var that = this;
-        that.obj = {
-          id:"",
-          parentId:"",
-          name:"",
-          href:"",
-          hide:"",
-          remark:"",
-          seq:"",
-          createAt:"",
-          createBy:"",
-          updateAt:"",
-          updateBy:"",
-          deleteAt:"",
-          deleteBy:"0"
-        };
+        that.initObj();
         $(boxClassName).show();
         $(".wrap").show();
       },
       closeBox:function (boxClassName) {
         $(boxClassName).hide();
         $(".wrap").hide()
+      },
+      compile:function(){
+        var text = document.getElementById("content").value;
+        var converter = new showdown.Converter();
+        var html = converter.makeHtml(text);
+        document.getElementById("result").innerHTML = html;
       }
     }
   }

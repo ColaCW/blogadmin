@@ -334,6 +334,24 @@
       that.menus = Web.getValue("menus");
     },
     methods: {
+      initObj:function(){
+        var that = this;
+        that.obj = {
+          id:"",
+          parentId:"",
+          name:"",
+          href:"",
+          hide:"",
+          remark:"",
+          seq:"",
+          createAt:"",
+          createBy:"",
+          updateAt:"",
+          updateBy:"",
+          deleteAt:"",
+          deleteBy:"0"
+        };
+      },
       doCreate:function () {
         var that = this;
         var data = {
@@ -344,21 +362,7 @@
           if(res.status){
             Web.showMessage("添加成功",2000);
             that.closeBox(".create-box");
-            that.obj = {
-              id:"",
-              parentId:"",
-              name:"",
-              href:"",
-              hide:"",
-              remark:"",
-              seq:"",
-              createAt:"",
-              createBy:"",
-              updateAt:"",
-              updateBy:"",
-              deleteAt:"",
-              deleteBy:"0"
-            };
+            that.initObj();
             that.doSearch();
           }else{
             layer.alert("添加失败");
@@ -410,21 +414,7 @@
           if(res.status){
             Web.showMessage("修改成功",2000);
             that.closeBox(".edit-box");
-            that.obj = {
-              id:"",
-              parentId:"",
-              name:"",
-              href:"",
-              hide:"",
-              remark:"",
-              seq:"",
-              createAt:"",
-              createBy:"",
-              updateAt:"",
-              updateBy:"",
-              deleteAt:"",
-              deleteBy:"0"
-            };
+            that.initObj();
             that.doSearch();
           }else{
             layer.alert("修改失败");
@@ -455,21 +445,7 @@
       },
       showBox:function (boxClassName) {
         var that = this;
-        that.obj = {
-          id:"",
-          parentId:"",
-          name:"",
-          href:"",
-          hide:"",
-          remark:"",
-          seq:"",
-          createAt:"",
-          createBy:"",
-          updateAt:"",
-          updateBy:"",
-          deleteAt:"",
-          deleteBy:"0"
-        };
+        that.initObj();
         $(boxClassName).show();
         $(".wrap").show();
       },
