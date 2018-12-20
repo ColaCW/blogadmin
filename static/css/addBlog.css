@@ -13,14 +13,14 @@ html, body{
   height: 45px;
   line-height: 45px;
 }
-.bar{
+.tool-bar{
   width: 100%;
-  height: 50px;
+  height: 45px;
   background-color: #e0e0e0;
 }
 .main{
   width: 100%;
-  height: 835px;
+  height: 840px;
 }
 
 .input-region{
@@ -60,8 +60,8 @@ html, body{
   margin-left: 300px;
   font-size: 20px;
 }
-.save-btn{
-  float: right;
+.push-btn{
+  float: left;
   border: 1px solid #f4f4f4;
   font-size: 16px;
   margin-right: 30px;
@@ -70,9 +70,36 @@ html, body{
 }
 .user{
   float: right;
-  margin-right: 30px;
+  margin-right: 300px;
+  margin-top: 5px;
   cursor: pointer;
 }
+
+.tool-bar .return-box{
+  float: left;
+  height: 30px;
+  line-height: 30px;
+  width: 100px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin: 8px 0px 0px 20px;
+}
+.tool-bar .return-box:hover,.tool-bar .upload-box:hover,.tool-bar .save-box:hover{
+  background-color:rgb(153, 153, 153);
+  color:rgb(214, 214, 214);
+}
+
+.tool-bar .upload-box,.tool-bar .save-box{
+  float: left;
+  height: 30px;
+  line-height: 30px;
+  width: 30px;
+  border-radius: 6px;
+  margin-top: 8px;
+  cursor: pointer;
+}
+
+
 
 ::-webkit-scrollbar
 {
