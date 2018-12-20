@@ -5,12 +5,33 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <link rel="shortcut icon" type="image/x-icon" href="/static/img/gaga.jpg">
   <title>编辑博客</title>
-  <link rel="stylesheet" href="/static/css/common.css"/>
+  <link rel="stylesheet" href="/static/css/addBlog.css"/>
 </head>
 <body>
-<div>
-  <textarea id="content" style="height:400px;width:600px;" onkeyup="compile()"></textarea>
-  <div id="result"></div>
+<div id="app" style="height:99%" v-cloak>
+  <div class="head">
+    <div class="blog-title" v-if="id == ''">新建博客</div>
+    <div class="blog-title" v-else>编辑</div>
+    <div class="save-btn">
+      <img src="../static/img/保存.png" style="float: left;width: 25px">
+      <div style="float: left;height: 30px;line-height: 30px;margin-left: 5px">保存文章</div>
+      <div style="clear: both"></div>
+    </div>
+    <div class="user">
+      <img src="../static/img/gaga.jpg" class="layui-nav-img" style="border-radius:16px;width:30px">
+    </div>
+    <div style="clear: both"></div>
+  </div>
+  <div class="bar"></div>
+  <div class="main">
+    <div class="input-region">
+      <textarea id="content" @keyup="compile()"></textarea>
+    </div>
+    <div class="result-region">
+      <div id="result"></div>
+    </div>
+    <div style="clear: both;"></div>
+  </div>
 </div>
 <script type="text/javascript" src="/static/js/jquery.min.js"></script>
 <script type="text/javascript" src="/static/js/store.min.js"></script>
@@ -18,8 +39,9 @@
 <script type="text/javascript" src="/static/js/showdown.js"></script>
 <script type="text/javascript">
   var app = new Vue({
+    el:"#app",
     data:{
-      id:""
+      id:"",
     },
     methods:{
       init:function () {
@@ -50,15 +72,24 @@
         }
         return defaultValue;
       },
+      getSrc:function(s){
+        if(s && s.indexOf("http")==-1){
+          s=this.host+"/"+s;
+        }else{
+          s='/f/_.gif';
+        }
+        return s;
+      },
+      compile:function(){
+        var text = document.getElementById("content").value;
+        var converter = new showdown.Converter();
+        var html = converter.makeHtml(text);
+        console.log(html)
+        document.getElementById("result").innerHTML = html;
+      }
     }
   })
   app.init();
-  function compile() {
-    var text = document.getElementById("content").value;
-    var converter = new showdown.Converter();
-    var html = converter.makeHtml(text);
-    document.getElementById("result").innerHTML = html;
-  }
 </script>
 </body>
 </html>

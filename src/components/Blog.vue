@@ -15,8 +15,8 @@
 
     <table class="layui-hide" id="SystemMenu" :lay-filter="home"></table>
     <script type="text/html" id="operation">
-      <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-      <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+      <a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>编辑</a>
+      <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</a>
     </script>
     <div class="search-box">
       <div class="box-head">
@@ -41,37 +41,9 @@
         <button class="layui-btn" @click="closeBox('.search-box')">取消</button>
       </div>
     </div>
-    <div class="edit-box">
-      <div class="box-head">
-        <div class="head-title"><template v-if="obj.id == ''">新建</template><template v-else>编辑</template></div>
-        <div class="close"><img src="../../static/img/close.png" style="width: 20px;" @click="closeBox('.edit-box')"/></div>
-        <div style="clear: both"></div>
-        <hr style="width: 100%;height: 1px;padding: 0;background-color: #b1a9a9;"/>
-      </div>
-      <div style="margin: 20px auto;width: 800px;">
-        <div>
-            <label>名称:</label><input type="text" v-model="obj.name"/>
-        </div>
-        <div>
-          <label style="float: left;">预览:</label><div style="width: 700px;height: 250px;float:left;border: 0.1px solid #A9A9A9;" id="result"></div>
-          <div style="clear: both"></div>
-        </div>
-        <div>
-          <label>markdown:</label><textarea style="width: 700px;height: 250px;" id="content" @keyup="compile()"></textarea>
-        </div>
-        <div style="clear: both"></div>
-      </div>
-      <div style="text-align: center;margin-top: 30px;">
-        <button class="layui-btn sureBtn" @click="doCreate()">创建</button>
-        <button class="layui-btn" @click="closeBox('.create-box')">取消</button>
-      </div>
-    </div>
     <div class="wrap"></div>
   </div>
 </template>
-<style>
-  @import "../../static/css/blog.css";
-</style>
 <script>
 
   import { Web } from "../../static/js/web.js";

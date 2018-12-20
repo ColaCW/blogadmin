@@ -15,8 +15,8 @@
 
     <table class="layui-hide" id="SystemMenu" :lay-filter="home"></table>
     <script type="text/html" id="operation">
-      <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-      <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+      <a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>编辑</a>
+      <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</a>
     </script>
     <div class="search-box">
       <div class="box-head">

@@ -1,0 +1,81 @@
+[v-cloak] {
+  display: none !important;
+}
+
+html, body{
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+  height: 100%;
+}
+.head{
+  width: 100%;
+  height: 45px;
+  line-height: 45px;
+}
+.bar{
+  width: 100%;
+  height: 50px;
+  background-color: #e0e0e0;
+}
+.main{
+  width: 100%;
+  height: 835px;
+}
+
+.input-region{
+  width: 50%;
+  float: left;
+  height: 100%;
+}
+
+.input-region textarea{
+  width: 99%;
+  height: 100%;
+  font-size: 20px;
+  resize:none;
+  border: 0;
+  background-color: #f4f4f4;
+}
+
+.input-region textarea:focus{
+  outline: none;
+}
+
+.result-region{
+  float: right;
+  width: 50%;
+  height: 100%;
+}
+
+.result-region #result{
+  height: 100%;
+  border: 0;
+  overflow-y: auto;
+  background-color: #fff;
+}
+
+.blog-title{
+  float: left;
+  margin-left: 300px;
+  font-size: 20px;
+}
+.save-btn{
+  float: right;
+  border: 1px solid #f4f4f4;
+  font-size: 16px;
+  margin-right: 30px;
+  margin-top: 8px;
+  cursor: pointer;
+}
+.user{
+  float: right;
+  margin-right: 30px;
+  cursor: pointer;
+}
+
+::-webkit-scrollbar
+{
+  width: 0px;
+  height: 0px;
+}
