@@ -30,8 +30,11 @@
       <div style="float: left;height: 30px;line-height: 30px;margin-left: 5px">返回后台</div>
       <div style="clear: both"></div>
     </div>
-    <div class="upload-box" title="上传"><img src="img/上传.png" style="width: 30px"></div>
-    <div class="save-box" title="保存"><img src="img/保存.png" style="width: 30px"></div>
+    <div class="upload-box" title="上传">
+      <img src="img/上传.png" style="width: 30px">
+      <input type="file">
+    </div>
+    <div class="save-box" title="保存" @click="doUpdate()"><img src="img/保存.png" style="width: 25px;margin-top:2px;margin-left: 2px;"></div>
   </div>
   <div class="main">
     <div class="input-region">
@@ -47,55 +50,49 @@
 <script type="text/javascript" src="/static/js/store.min.js"></script>
 <script type="text/javascript" src="/static/js/vue.min.js"></script>
 <script type="text/javascript" src="/static/js/showdown.js"></script>
+<script type="text/javascript" src="/static/js/web1.js"></script>
 <script type="text/javascript">
   var app = new Vue({
     el:"#app",
     data:{
+      token:Web.getToken(),
       id:"",
+      blog:{
+
+      }
     },
     methods:{
       init:function () {
         var that = this;
-        that.id = that.getParam("","id","");
+        that.id = Web.getParam("","id","");
         console.log(that.id)
+        that.doRead();
       },
-      getParam: function (url, name, defaultValue) {
-        if (typeof (url) == 'undefined' || !url) {
-          url = window.location.search.substr(1);
-        }
-        var i = url.indexOf('#');
-        if (i != -1) {
-          url = url.substring(0, i);
-        }
-        i = url.indexOf('?');
-        if (i != -1) {
-          url = url.substring(i + 1);
-        }
-        url = '&' + url + '&';
-        var key = '&' + name + '=';
-        var i = url.indexOf(key);
-        if (i != -1) {
-          var j = url.indexOf('&', i + key.length);
-          if (j != -1) {
-            return url.substring(i + key.length, j);
-          }
-        }
-        return defaultValue;
-      },
-      getSrc:function(s){
-        if(s && s.indexOf("http")==-1){
-          s=this.host+"/"+s;
-        }else{
-          s='/f/_.gif';
-        }
-        return s;
-      },
+
       compile:function(){
         var text = document.getElementById("content").value;
         var converter = new showdown.Converter();
         var html = converter.makeHtml(text);
         console.log(html)
         document.getElementById("result").innerHTML = html;
+      },
+      doRead:function () {
+          var that = this;
+          var data = {
+            id:that.id
+          };
+          Web.post(that.host + "/api/blog/doRead.do",data,function (res) {
+            if(res.status){
+              that.blog = res.data;
+            }
+          })
+      },
+      doUpdate:function () {
+          var that = this;
+          var data = {
+            token:that.token,
+            obj:{}
+          }
       }
     }
   })
