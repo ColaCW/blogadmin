@@ -540,8 +540,8 @@ function QiniuJsSDK() {
                 ajax.send();
                 if (ajax.status === 200) {
                     var res = that.parseJSON(ajax.responseText);
-                    that.token = res.uptoken;
-                    logger.debug("get new uptoken: ", res.uptoken);
+                    that.token = res.data;
+                    logger.debug("get new uptoken: ", res.data);
                 } else {
                     logger.error("get uptoken error: ", ajax.responseText);
                 }
