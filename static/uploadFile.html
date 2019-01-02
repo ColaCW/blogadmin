@@ -21,8 +21,8 @@
   var uploader = Qiniu.uploader({
     runtimes: 'html5,html4,flash',    //上传模式,依次退化
     browse_button: 'uploadBanner',       //上传选择的点选按钮，**必需**
-    uptoken_url: Web.host + '/api/web/getQiniuUpToken.do',            //Ajax请求upToken的Url，**强烈建议设置**（服务端提供）
-    // uptoken : '', //若未指定uptoken_url,则必须指定 uptoken ,uptoken由其他程序生成
+    // uptoken_url: Web.host + '/api/web/getQiniuUpToken.do',            //Ajax请求upToken的Url，**强烈建议设置**（服务端提供）
+    uptoken : 'BfRL9a27gWaYwXANfmnuii-5pZEsC7Q-SxJEU5fv:gRDAn_CHfaIXPA_uxhhA8XqMOdQ=:eyJzY29wZSI6ImJsb2dwaWN0dXJlIiwiZGVhZGxpbmUiOjE1NDY0MzYzODZ9', //若未指定uptoken_url,则必须指定 uptoken ,uptoken由其他程序生成
     unique_names: true, // 默认 false，key为文件名。若开启该选项，SDK为自动生成上传成功后的key（文件名）。
     // save_key: true,   // 默认 false。若在服务端生成uptoken的上传策略中指定了 `sava_key`，则开启，SDK会忽略对key的处理
     domain: "http://lgqoxb.top",   //bucket 域名，下载资源时用到，**必需**
@@ -34,7 +34,7 @@
     dragdrop: true,                   //开启可拖曳上传
     drop_element: 'bannerTd',        //拖曳上传区域元素的ID，拖曳文件或文件夹后可触发上传
     chunk_size: '0mb',                //分块上传时，每片的体积
-    auto_start: false,                 //选择文件后自动上传，若关闭需要自己绑定事件触发上传
+    auto_start: true,                 //选择文件后自动上传，若关闭需要自己绑定事件触发上传
     init: {
       'FilesAdded': function(up, files) {
         plupload.each(files, function(file) {
@@ -43,6 +43,7 @@
       },
       'BeforeUpload': function(up, file) {
         // 每个文件上传前,处理相关的事情
+        console.log("上传前")
       },
       'UploadProgress': function(up, file) {
         // 每个文件上传时,处理相关的事情
@@ -50,6 +51,7 @@
         var percent = file.percent;
         //上传提示
         $("#uploadBanner").text("已经上传" + percent + "%");
+        console.log("上传中"+ percent + "%")
       },
       'FileUploaded': function(up, file, info) {
         // 每个文件上传成功后,处理相关的事情
@@ -66,13 +68,18 @@
         $("#banner").val(obj.key);
         $("#uploadBanner").text("重新上传");
         $("#bannerBackShow").attr("src",url);
+        console.log("上传成功")
+        console.log(info)
+        var callback_data = JSON.parse(info)
+        window.open("http://lgqoxb.top/"+callback_data.key)
       },
       'Error': function(up, err, errTip) {
         //上传出错时,处理相关的事情
+        console.log("出错")
       },
       'UploadComplete': function() {
         //队列文件处理完毕后,处理相关的事情
-        console.log(11111111)
+        console.log("处理完毕")
       },
       'Key': function(up, file) {
         // 若想在前端对每个文件的key进行个性化处理，可以配置该函数
