@@ -205,3 +205,28 @@ img {
     transform: rotate(360deg);
   }
 }
+.uploadBoxWrap{
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0,0,0,.3);
+  z-index: 99;
+  display: none;
+}
+
+.uploadBox{
+  width: 300px;
+  height: 300px;
+  position: fixed;
+  top: 30%;
+  left: 40%;
+  z-index: 999;
+}
+
+.uploadBox iframe{
+  border: 0;
+  width: 100%;
+  height: 100%;
+}

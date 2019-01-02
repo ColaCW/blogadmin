@@ -75,7 +75,7 @@ html, body{
   cursor: pointer;
 }
 
-.tool-bar .return-box{
+.tool-bar .return-btn{
   float: left;
   height: 30px;
   line-height: 30px;
@@ -84,12 +84,12 @@ html, body{
   cursor: pointer;
   margin: 8px 0px 0px 20px;
 }
-.tool-bar .return-box:hover,.tool-bar .upload-box:hover,.tool-bar .save-box:hover{
+.tool-bar .return-btn:hover,.tool-bar .upload-btn:hover,.tool-bar .save-btn:hover{
   background-color:rgb(153, 153, 153);
   color:rgb(214, 214, 214);
 }
 
-.tool-bar .upload-box,.tool-bar .save-box{
+.tool-bar .upload-btn,.tool-bar .save-btn{
   float: left;
   height: 30px;
   line-height: 30px;
