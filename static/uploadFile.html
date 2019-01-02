@@ -6,8 +6,9 @@
   <link rel="shortcut icon" type="image/x-icon" href="/static/img/gaga.jpg">
   <title>上传文件</title>
   <script type="text/javascript" src="/static/js/jquery.min.js"></script>
-
-  <script type="text/javascript" src="/static/js/qiniu.min.js"></script>
+  <script type="text/javascript" src="/static/js/plupload.full.min.js"></script>
+  <script type="text/javascript" src="/static/js/moxie.js"></script>
+  <script type="text/javascript" src="/static/js/qiniu.js"></script>
   <script type="text/javascript" src="/static/js/web1.js"></script>
 </head>
 <body>
@@ -71,6 +72,7 @@
       },
       'UploadComplete': function() {
         //队列文件处理完毕后,处理相关的事情
+        console.log(11111111)
       },
       'Key': function(up, file) {
         // 若想在前端对每个文件的key进行个性化处理，可以配置该函数
