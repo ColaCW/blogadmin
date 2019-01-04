@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <link rel="shortcut icon" type="image/x-icon" href="/static/img/gaga.jpg">
   <title>编辑博客</title>
-  <link rel="stylesheet" href="/static/css/common.css"/>
   <link rel="stylesheet" href="/static/css/addBlog.css"/>
 </head>
 <body>
@@ -14,7 +13,7 @@
     <div class="blog-title" v-if="id == ''">新建博客</div>
     <div class="blog-title" v-else>编辑</div>
     <div style="float:right;">
-      <div class="push-btn">
+      <div class="push-btn" @click="$('.releaseBoxWrap').fadeIn()">
         <img src="img/发布.png" style="float: left;width: 25px">
         <div style="float: left;height: 30px;line-height: 30px;margin-left: 5px">发布文章</div>
         <div style="clear: both"></div>
@@ -34,7 +33,13 @@
     <div class="upload-btn" title="上传" @click="$('.uploadBoxWrap').fadeIn()">
       <img src="img/上传.png" style="width: 30px">
     </div>
-    <div class="save-btn" title="保存" @click="doUpdate()"><img src="img/保存.png" style="width: 25px;margin-top:2px;margin-left: 2px;"></div>
+    <div class="save-btn" title="保存" @click="save()">
+      <img src="img/保存.png" style="width: 25px;margin-top:2px;margin-left: 2px;">
+    </div>
+    <div class="preview-btn" :title="isPreview ? '编辑':'预览'" @click="changePreview()">
+      <img src="img/眼睛.png" style="width: 25px;margin-top:2px;margin-left: 2px;" v-show="!isPreview">
+      <img src="img/笔.png" style="width: 25px;margin-top:2px;margin-left: 2px;" v-show="isPreview">
+    </div>
   </div>
   <div class="main">
     <div class="input-region">
@@ -44,6 +49,17 @@
       <div id="result"></div>
     </div>
     <div style="clear: both;"></div>
+  </div>
+
+  <div class="releaseBoxWrap" onclick="$('.releaseBoxWrap').fadeOut()">
+    <div class="releaseBox">
+        <div class="box-head">
+          <div class="head-title">发布文章</div>
+          <div class="close"><img src="/static/img/close.png" style="width: 20px;" @click="$('.releaseBoxWrap').fadeOut()"/></div>
+          <div style="clear: both"></div>
+        </div>
+      <div class="blog-type">博客分类</div>
+    </div>
   </div>
 
   <!--上传框-->
@@ -66,6 +82,7 @@
     data:{
       token:Web.getToken(),
       id:"",
+      isPreview:false,
       blog:{
 
       }
@@ -74,7 +91,6 @@
       init:function () {
         var that = this;
         that.id = Web.getParam("","id","");
-        console.log(that.id)
         that.doRead();
       },
 
@@ -82,7 +98,6 @@
         var text = document.getElementById("content").value;
         var converter = new showdown.Converter();
         var html = converter.makeHtml(text);
-        console.log(html)
         document.getElementById("result").innerHTML = html;
       },
       doRead:function () {
@@ -96,19 +111,54 @@
             }
           })
       },
+      doCreate:function () {
+        var that = this;
+        var data = {
+          token:that.token,
+          obj:that.blog
+        };
+        Web.post(that.host + "/api/blog/doCreate.do",data,function (res) {
+          if(res.status){
+            that.blog = res.data;
+          }
+        })
+      },
       doUpdate:function () {
           var that = this;
           var data = {
             token:that.token,
-            obj:{}
-          }
+            obj:that.blog
+          };
+          Web.post(that.host + "/api/blog/doUpdate.do",data,function (res) {
+            if(res.status){
+              that.blog = res.data;
+            }
+          })
+      },
+      save:function(){
+        var that = this;
+        if(that.blog.id && that.blog.id != ""){
+            that.doUpdate();
+        }else{
+            that.doCreate();
+        }
+      },
+      changePreview:function(){
+        var that = this;
+        that.isPreview = !that.isPreview;
+        if(that.isPreview){
+          $(".input-region").hide();
+          $(".result-region").css("width","100%");
+        }else{
+          $(".input-region").show();
+          $(".result-region").css("width","50%");
+        }
       },
       uploadCallback:function (info) {
         var callback_data = JSON.parse(info)
-        // window.open("http://lgqoxb.top/"+callback_data.key)
       }
     }
-  })
+  });
   app.init();
 </script>
 </body>
