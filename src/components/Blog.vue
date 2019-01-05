@@ -13,7 +13,7 @@
       </button>
     </div>
 
-    <table class="layui-hide" id="SystemMenu" :lay-filter="home"></table>
+    <table class="layui-hide" id="Blog" :lay-filter="home"></table>
     <script type="text/html" id="operation">
       <a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>编辑</a>
       <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</a>
@@ -47,26 +47,29 @@
 <script>
 
   import { Web } from "../../static/js/web.js";
+  import Blog from './Blog.vue'
 
   export default {
     data () {
       return {
-        home:"SystemMenu",
-        token:"S5zadQHNC4",
+        home:"Blog",
+        token:Web.getToken(),
         cols:[
           {type:'checkbox'}
-          ,{field:'id', title: 'ID', sort: true}
+          ,{field:'id', title: 'ID'}
           ,{field:'name', title: '名称'}
-          ,{field:'href', title: '链接'}
-          ,{field:'hide', title: '隐藏',templet: function (d) {
-            if(d.hide === 0){
-              return "否";
-            }else if(d.hide === 1){
-              return "是";
+          ,{field:'categoryId', title: '分类'}
+          ,{field:'viewNum', title: '观看数'}
+          ,{field:'likeNum', title: '点赞数'}
+          ,{field:'status', title: '状态',templet: function (d) {
+            if(d.status === "0"){
+              return "已下线";
+            }else if(d.status === "1"){
+              return "编辑中";
+            }else if(d.status === "2"){
+              return "已发布";
             }
             }}
-          ,{field:'remark', title: '备注'}
-          ,{field:'seq', title: '排序', sort: true}
           ,{ align:'center', toolbar: '#operation', title: '操作'}
         ],
         tableData:null,
@@ -76,12 +79,16 @@
         //编辑对象
         obj:{
           id:"",
-          parentId:"",
           name:"",
-          href:"",
-          hide:"",
+          content:"",
+          markdown:"",
+          categoryId:"",
+          viewNum:"",
+          likeNum:"",
+          status:"",
+          ip:"",
+          userAgent:"",
           remark:"",
-          seq:"",
           createAt:"",
           createBy:"",
           updateAt:"",
@@ -147,8 +154,7 @@
             });
           } else if(obj.event === 'edit'){
             that.obj = data;
-            $('.edit-box').show();
-            $(".wrap").show()
+            that.goAddBlog(that.obj.id);
           }
         });
         table.on('checkbox('+ that.home +')', function(obj){
@@ -172,14 +178,18 @@
     methods: {
       initObj:function(){
         var that = this;
-        that.obj = {
+        that.obj={
           id:"",
-          parentId:"",
           name:"",
-          href:"",
-          hide:"",
+          content:"",
+          markdown:"",
+          categoryId:"",
+          viewNum:"",
+          likeNum:"",
+          status:"",
+          ip:"",
+          userAgent:"",
           remark:"",
-          seq:"",
           createAt:"",
           createBy:"",
           updateAt:"",
@@ -199,7 +209,7 @@
         }
         Web.post(Web.host + "/api/"+ that.home + "/create.do",data,function (res) {
           if(res.status){
-            Web.showMessage("添加成功",2000);
+            Web.showToast("添加成功",2000);
             that.closeBox(".create-box");
             that.initObj();
             that.doSearch();
@@ -228,7 +238,7 @@
       deleteAll: function () {
         var that = this;
         if (that.chooseArray.length == 0) {
-          Web.showMessage("请选择要删除的数据", 2000);
+          Web.showToast("请选择要删除的数据", 2000);
           return
         }
         var ids = "";
@@ -239,7 +249,7 @@
           ids += that.chooseArray[i].id
         }
         that.doDelete(ids, function () {
-          Web.showMessage("删除成功", 2000);
+          Web.showToast("删除成功", 2000);
           that.doSearch();
         })
       },
@@ -251,7 +261,7 @@
         }
         Web.post(Web.host + "/api/"+ that.home + "/update.do",data,function (res) {
           if(res.status){
-            Web.showMessage("修改成功",2000);
+            Web.showToast("修改成功",2000);
             that.closeBox(".edit-box");
             that.initObj();
             that.doSearch();
@@ -300,4 +310,5 @@
       }
     }
   }
+
 </script>

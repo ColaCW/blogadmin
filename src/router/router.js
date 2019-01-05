@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Main from '@/components/Main'
 import Blog from '@/components/Blog'
-import BlogType from '@/components/BlogType'
+import BlogCategory from '@/components/BlogCategory'
 import SystemMenu from '@/components/SystemMenu'
 
 Vue.use(Router)
@@ -20,9 +20,9 @@ export default new Router({
       component: Blog
     },
     {
-      path: '/BlogType',
-      name: 'BlogType',
-      component: BlogType
+      path: '/BlogCategory',
+      name: 'BlogCategory',
+      component: BlogCategory
     },
     {
       path: '/SystemMenu',

@@ -216,7 +216,7 @@
     data () {
       return {
         home:"SystemMenu",
-        token:"S5zadQHNC4",
+        token:Web.getToken(),
         cols:[
           {type:'checkbox'}
           ,{field:'id', title: 'ID', sort: true}
@@ -360,7 +360,7 @@
         }
         Web.post(Web.host + "/api/"+ that.home + "/create.do",data,function (res) {
           if(res.status){
-            Web.showMessage("添加成功",2000);
+            Web.showToast("添加成功",2000);
             that.closeBox(".create-box");
             that.initObj();
             that.doSearch();
@@ -389,7 +389,7 @@
       deleteAll: function () {
         var that = this;
         if (that.chooseArray.length == 0) {
-          Web.showMessage("请选择要删除的数据", 2000);
+          Web.showToast("请选择要删除的数据", 2000);
           return
         }
         var ids = "";
@@ -400,7 +400,7 @@
           ids += that.chooseArray[i].id
         }
         that.doDelete(ids, function () {
-          Web.showMessage("删除成功", 2000);
+          Web.showToast("删除成功", 2000);
           that.doSearch();
         })
       },
@@ -412,7 +412,7 @@
         }
         Web.post(Web.host + "/api/"+ that.home + "/update.do",data,function (res) {
           if(res.status){
-            Web.showMessage("修改成功",2000);
+            Web.showToast("修改成功",2000);
             that.closeBox(".edit-box");
             that.initObj();
             that.doSearch();

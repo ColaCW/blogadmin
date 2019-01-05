@@ -105,7 +105,7 @@ html, body{
 }
 .box-head .head-title{
   font-size: 18px;
-  width: 95%;
+  width: 70%;
   float: left;
 }
 .box-head .close{
@@ -177,11 +177,48 @@ html, body{
 }
 
 .releaseBox{
-  width: 500px;
-  height: 400px;
+  width: 300px;
+  height: 200px;
   position: fixed;
-  top: 19%;
+  top: 30%;
   left: 36%;
   background-color: white;
   z-index: 999;
+}
+.blog-name,.blog-type{
+  margin: 20px;
+}
+
+.release-btn{
+  width: 160px;
+  margin: 30px auto;
+}
+.release-btn .releaseBtn,.release-btn .cancelBtn{
+  cursor: pointer;
+  float: left;
+  text-align: center;
+  width: 80px;
+  height: 30px;
+  line-height: 30px;
+  border-radius: 6px;
+}
+.release-btn .releaseBtn:hover,.release-btn .cancelBtn:hover{
+  background-color: #A9A9A9;
+}
+
+/*tosat弹框*/
+.toast{
+  min-width: 200px;
+  color: #fff;
+  background-color: rgba(0,0,0,.5);
+  text-align: center;
+  border-radius: 6px;
+  font-size: 18px;
+  line-height: 53px;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  margin: -26.5px 0 0 -148px;
+  display: none;
+  z-index: 999999;
 }

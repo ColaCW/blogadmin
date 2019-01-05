@@ -11,7 +11,7 @@
 <div id="app" style="height:99%" v-cloak>
   <div class="head">
     <div class="blog-title" v-if="id == ''">新建博客</div>
-    <div class="blog-title" v-else>编辑</div>
+    <div class="blog-title" v-else>编辑&nbsp;&nbsp;{{blog.name}}</div>
     <div style="float:right;">
       <div class="push-btn" @click="$('.releaseBoxWrap').fadeIn()">
         <img src="img/发布.png" style="float: left;width: 25px">
@@ -33,7 +33,7 @@
     <div class="upload-btn" title="上传" @click="$('.uploadBoxWrap').fadeIn()">
       <img src="img/上传.png" style="width: 30px">
     </div>
-    <div class="save-btn" title="保存" @click="save()">
+    <div class="save-btn" title="保存" @click="save(1)">
       <img src="img/保存.png" style="width: 25px;margin-top:2px;margin-left: 2px;">
     </div>
     <div class="preview-btn" :title="isPreview ? '编辑':'预览'" @click="changePreview()">
@@ -43,7 +43,7 @@
   </div>
   <div class="main">
     <div class="input-region">
-      <textarea id="content" @keyup="compile()"></textarea>
+      <textarea id="content" @keyup="compile()" v-model="blog.markdown"></textarea>
     </div>
     <div class="result-region">
       <div id="result"></div>
@@ -51,14 +51,30 @@
     <div style="clear: both;"></div>
   </div>
 
-  <div class="releaseBoxWrap" onclick="$('.releaseBoxWrap').fadeOut()">
+  <div class="releaseBoxWrap">
     <div class="releaseBox">
         <div class="box-head">
           <div class="head-title">发布文章</div>
           <div class="close"><img src="/static/img/close.png" style="width: 20px;" @click="$('.releaseBoxWrap').fadeOut()"/></div>
           <div style="clear: both"></div>
         </div>
-      <div class="blog-type">博客分类</div>
+        <div class="blog-name">
+          博客名称:
+          <input type="text" v-model="blog.name" style="width: 100px;"><span style="color:red;margin-left: 2px;">*</span>
+        </div>
+        <div class="blog-type" v-if="blogCategorys && blogCategorys.length>0">
+        博客分类:
+        <select style="width: 100px;" v-model="blog.categoryId">
+          <template v-for="blogCategory in blogCategorys">
+            <option :value="blogCategory.id">{{blogCategory.name}}</option>
+          </template>
+        </select><span style="color:red;margin-left: 2px;">*</span>
+      </div>
+        <div class="release-btn">
+          <div class="releaseBtn" @click="save(2)">发布</div>
+          <div class="cancelBtn" @click="$('.releaseBoxWrap').fadeOut()">取消</div>
+          <div style="clear: both"></div>
+        </div>
     </div>
   </div>
 
@@ -84,14 +100,16 @@
       id:"",
       isPreview:false,
       blog:{
-
-      }
+        categoryId:"1"
+      },
+      blogCategorys:[]
     },
     methods:{
       init:function () {
         var that = this;
         that.id = Web.getParam("","id","");
         that.doRead();
+        that.getBlogCategory();
       },
 
       compile:function(){
@@ -100,47 +118,89 @@
         var html = converter.makeHtml(text);
         document.getElementById("result").innerHTML = html;
       },
-      doRead:function () {
+      getBlogCategory:function(){
           var that = this;
           var data = {
-            id:that.id
+            token:that.token
           };
-          Web.post(that.host + "/api/blog/doRead.do",data,function (res) {
+          Web.post(Web.host + "/api/BlogCategory/search.do",data,function (res) {
             if(res.status){
-              that.blog = res.data;
+              that.blogCategorys = res.data;
             }
           })
       },
-      doCreate:function () {
+      doRead:function () {
+          var that = this;
+          var data = {
+            token:that.token,
+            id:that.id
+          };
+          Web.post(Web.host + "/api/Blog/read.do",data,function (res) {
+            if(res.status){
+              that.blog = res.data;
+              that.$nextTick(function () {
+                that.compile();
+              });
+            }
+          })
+      },
+      doCreate:function (type) {
         var that = this;
         var data = {
           token:that.token,
           obj:that.blog
         };
-        Web.post(that.host + "/api/blog/doCreate.do",data,function (res) {
+        Web.post(Web.host + "/api/Blog/create.do",data,function (res) {
           if(res.status){
             that.blog = res.data;
+            if(type == 1){
+              Web.showToast("保存成功",2000);
+            }else{
+              Web.showToast("发布成功",2000);
+              window.close();
+            }
+          }else{
+            if(type == 1){
+              Web.showToast("保存失败",2000);
+            }else{
+              Web.showToast("发布失败",2000);
+            }
           }
         })
       },
-      doUpdate:function () {
+      doUpdate:function (type) {
           var that = this;
           var data = {
             token:that.token,
             obj:that.blog
           };
-          Web.post(that.host + "/api/blog/doUpdate.do",data,function (res) {
+          Web.post(Web.host + "/api/Blog/update.do",data,function (res) {
             if(res.status){
               that.blog = res.data;
+              if(type == 1){
+                Web.showToast("保存成功",2000);
+              }else{
+                Web.showToast("发布成功",2000);
+                window.close();
+              }
+            }else{
+              if(type == 1){
+                Web.showToast("保存失败",2000);
+              }else{
+                Web.showToast("发布失败",2000);
+              }
             }
           })
       },
-      save:function(){
+      save:function(type){
         var that = this;
+        if(type == 2){
+          that.blog.status = 2;
+        }
         if(that.blog.id && that.blog.id != ""){
-            that.doUpdate();
+            that.doUpdate(type);
         }else{
-            that.doCreate();
+            that.doCreate(type);
         }
       },
       changePreview:function(){
