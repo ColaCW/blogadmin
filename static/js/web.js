@@ -9,8 +9,8 @@ function getHost() {
 
 var Web = {
 
-  // host: getHost(),
-  host: "http://127.0.0.1",
+  host: getHost(),
+  // host: "http://127.0.0.1",
 
   get: function (url, data, success) {
     var data2 = "";
