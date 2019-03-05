@@ -99,9 +99,7 @@
       token:Web.getToken(),
       id:"",
       isPreview:false,
-      blog:{
-        categoryId:"1"
-      },
+      blog:{},
       blogCategorys:[]
     },
     methods:{
@@ -113,10 +111,12 @@
       },
 
       compile:function(){
+        var that = this;
         var text = document.getElementById("content").value;
         var converter = new showdown.Converter();
         var html = converter.makeHtml(text);
         document.getElementById("result").innerHTML = html;
+        that.blog.content = html;
       },
       getBlogCategory:function(){
           var that = this;
