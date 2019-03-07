@@ -241,7 +241,11 @@
             that.blog.markdown += img;
             that.blog.imgIds += res.data+",";
             that.blog.imgSrc += callback_data.key+",";
-            $('.uploadBoxWrap').fadeIn()
+            that.$forceUpdate();
+            that.$nextTick(function () {
+              that.compile();
+            });
+            $('.uploadBoxWrap').fadeOut()
           }
         })
       }
