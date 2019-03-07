@@ -57,20 +57,31 @@
     <div class="releaseBox">
         <div class="box-head">
           <div class="head-title">发布文章</div>
-          <div class="close"><img src="../static/img/close.png" style="width: 20px;" @click="$('.releaseBoxWrap').fadeOut()"/></div>
+          <div class="close"><img src="http://lgqoxb.top/o_1d5bdkjbpjmnfdubih158bqdd8.png" style="width: 20px;" @click="$('.releaseBoxWrap').fadeOut()"/></div>
           <div style="clear: both"></div>
         </div>
         <div class="blog-name">
           博客名称:
-          <input type="text" v-model="blog.name" style="width: 100px;"><span style="color:red;margin-left: 2px;">*</span>
+          <input type="text" v-model="blog.name" style="width: 170px;display: inline-block;">
+          <span style="color:red;margin-left: 2px;">*</span>
         </div>
         <div class="blog-type" v-if="blogCategorys && blogCategorys.length>0">
         博客分类:
-        <select style="width: 100px;" v-model="blog.categoryId">
+        <select style="width: 170px;" v-model="blog.categoryId">
           <template v-for="blogCategory in blogCategorys">
             <option :value="blogCategory.id">{{blogCategory.name}}</option>
           </template>
         </select><span style="color:red;margin-left: 2px;">*</span>
+      </div>
+        <div class="blog-name">
+          博客简介:
+          <input type="text" v-model="blog.brief" style="width: 170px;display: inline-block;">
+          <span style="color:red;margin-left: 2px;">*</span>
+        </div>
+        <div class="blog-name">
+        博客标签:
+        <input type="text" v-model="blog.tags" style="width: 170px;display: inline-block;">
+        <span style="color:red;margin-left: 2px;">*</span>
       </div>
         <div class="release-btn">
           <div class="releaseBtn" @click="save(2)">发布</div>
@@ -218,7 +229,21 @@
         }
       },
       uploadCallback:function (info) {
-        var callback_data = JSON.parse(info)
+        var that = this;
+        var callback_data = JSON.parse(info);
+        var data = {
+          token:Web.getToken(),
+          fileSrc:callback_data.key
+        }
+        Web.post(Web.host + "/api/web/uploadFile.do",data,function (res) {
+          if(res.status){
+            var img = "![]("+Web.getSrc(callback_data.key)+")";
+            that.blog.markdown += img;
+            that.blog.imgIds += res.data+",";
+            that.blog.imgSrc += callback_data.key+",";
+            $('.uploadBoxWrap').fadeIn()
+          }
+        })
       }
     }
   });
