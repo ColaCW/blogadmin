@@ -6,6 +6,8 @@
   <link rel="shortcut icon" type="image/x-icon" href="img/gaga.jpg">
   <title>编辑博客</title>
   <link rel="stylesheet" href="css/addBlog.css"/>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="css/foundation.min.css"/>
 </head>
 <body>
 <div id="app" style="height:99%" v-cloak>
@@ -55,7 +57,7 @@
     <div class="releaseBox">
         <div class="box-head">
           <div class="head-title">发布文章</div>
-          <div class="close"><img src="/static/img/close.png" style="width: 20px;" @click="$('.releaseBoxWrap').fadeOut()"/></div>
+          <div class="close"><img src="../static/img/close.png" style="width: 20px;" @click="$('.releaseBoxWrap').fadeOut()"/></div>
           <div style="clear: both"></div>
         </div>
         <div class="blog-name">
@@ -91,6 +93,7 @@
 <script type="text/javascript" src="js/store.min.js"></script>
 <script type="text/javascript" src="js/vue.min.js"></script>
 <script type="text/javascript" src="js/showdown.js"></script>
+<script type="text/javascript" src="js/highlight.js"></script>
 <script type="text/javascript" src="js/web1.js"></script>
 <script type="text/javascript">
   var app = new Vue({

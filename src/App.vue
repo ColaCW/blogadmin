@@ -82,7 +82,7 @@
         });
       });
       that.user = {"username":"lgq"};
-      that.imgPhoto = Web.getSrc('/index/img/gaga.jpg');
+      that.imgPhoto = '../static/img/gaga.jpg';
       that.$router.push("/");
       that.init();
     },
