@@ -56,13 +56,13 @@
 </template>
 <script>
 
-  import App from './App.vue'
   import { Web } from "../static/js/web.js";
 
   export default{
     name: 'App',
     data () {
       return {
+        element:{},
         home:"SystemMenu",
         page:0,
         pageSize:10,
@@ -75,19 +75,21 @@
     },
     mounted:function(){
       var that = this;
-      layui.use('element', function(){
-        var element = layui.element;
-        element.on('tab(top_tab)', function(data){
-          that.goTopMenu(data.index);
+      that.user = {"username":"lgq"};
+      that.imgPhoto = Web.getSrc("gaga.jpg");
+      that.$router.push("/");
+      that.init(function () {
+        layui.use('element', function(){
+          var element = layui.element;
+          element.on('tab(top_tab)', function(data){
+            that.goTopMenu(data.index);
+          });
+          element.render("nav","main_nav");
         });
       });
-      that.user = {"username":"lgq"};
-      that.imgPhoto = '../static/img/gaga.jpg';
-      that.$router.push("/");
-      that.init();
     },
     methods: {
-      init:function(){
+      init:function(callback){
         var that = this;
         var data = {
           page:that.page,
@@ -98,6 +100,9 @@
             if(that.page == 0){
               that.menus = res.data;
               Web.setValue("menus",that.menus);
+              if(callback){
+                callback();
+              }
             }else{
               that.menus = res.data.content
             }
