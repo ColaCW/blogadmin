@@ -237,14 +237,14 @@
         }
         Web.post(Web.host + "/api/web/uploadFile.do",data,function (res) {
           if(res.status){
-            var img = "![]("+Web.getSrc(callback_data.key)+")";
+            var img = "<br/>![]("+Web.getSrc(callback_data.key)+")<br/>";
             if(typeof(that.blog.markdown) == "undefined"){
               that.blog.markdown = "";
             }
-            if(typeof(that.blog.imgIds) == "undefined"){
+            if(typeof(that.blog.imgIds) == "undefined" || that.blog.imgIds == null){
               that.blog.imgIds = "";
             }
-            if(typeof(that.blog.imgSrc) == "undefined"){
+            if(typeof(that.blog.imgSrc) == "undefined" || that.blog.imgSrc == null){
               that.blog.imgSrc = "";
             }
             that.blog.markdown += img;
