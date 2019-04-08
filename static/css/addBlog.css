@@ -75,7 +75,6 @@ html, body{
 .user{
   float: right;
   margin-right: 300px;
-  margin-top: 5px;
   cursor: pointer;
 }
 
