@@ -42,7 +42,7 @@
     flash_swf_url: '/static/js/Moxie.swf',  //引入flash,相对路径
     max_retries: 3,                   //上传失败最大重试次数
     dragdrop: true,                   //开启可拖曳上传
-    drop_element: 'bannerTd',        //拖曳上传区域元素的ID，拖曳文件或文件夹后可触发上传
+    drop_element: 'DragBox',        //拖曳上传区域元素的ID，拖曳文件或文件夹后可触发上传
     chunk_size: '0mb',                //分块上传时，每片的体积
     auto_start: true,                 //选择文件后自动上传，若关闭需要自己绑定事件触发上传
     init: {
@@ -72,7 +72,6 @@
         //    "hash": "Fh8xVqod2MQ1mocfI4S4KpRL6D98",
         //    "key": "gogopher.jpg"
         //  }
-        // 参考http://developer.qiniu.com/docs/v6/api/overview/up/response/simple-response.html
 
         var domain = up.getOption('domain');
         var obj = JSON.parse(info);
