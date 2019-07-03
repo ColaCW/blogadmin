@@ -13,6 +13,10 @@ body {
     outline: none;
     margin: 0;
     padding: 0;
+    height:100%;
+}
+#app{
+  height:100%;
 }
 
 body,
@@ -120,10 +124,6 @@ textarea {
     outline: medium none;
 }
 
-input{
-  height: 15px !important;
-  padding: 10px 0 !important;
-}
 textarea{
   border-radius: 6px;
   padding: 10px;
@@ -148,63 +148,6 @@ img {
   display: none;
 }
 
-.search-box{
-  display: none;
-  position: absolute;
-  width: 460px;
-  top: 30%;
-  left: 30%;
-  background-color: white;
-  z-index: 100;
-  padding: 10px 20px;
-  border-radius: 3px;
-}
-
-.edit-box,.create-box{
-  display: none;
-  position: absolute;
-  width: 500px;
-  top: 30%;
-  left: 30%;
-  background-color: white;
-  z-index: 100;
-  padding: 10px 20px;
-  border-radius: 3px;
-  max-height: 600px;
-}
-
-.box-head{
-  margin-bottom: 20px;
-}
-.box-head .head-title{
-  font-weight: bold;
-  font-size: 18px;
-  width: 95%;
-  text-align: center;
-  float: left;
-}
-.box-head .close{
-  float: right;
-  text-align: right;
-  cursor: pointer;
-}
-.box-head .close img:hover{
-  animation: myrotate .5s infinite linear;
-}
-@keyframes myrotate {
-  0% {
-    -webkit-transform: rotate(0deg);
-    -moz-transform: rotate(0deg);
-    -m-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    -moz-transform: rotate(360deg);
-    -m-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
 .uploadBoxWrap{
   width: 100%;
   height: 100%;
@@ -247,3 +190,15 @@ img {
   display: none;
   z-index: 999999;
 }
+
+.center{
+ text-align: center;
+}
+
+.table{
+  margin-top: 10px;
+}
+.tableHead{
+  margin-bottom: 10px;
+}
+

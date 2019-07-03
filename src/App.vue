@@ -1,57 +1,62 @@
 <template>
-  <div id="app" class="layui-layout layui-layout-admin">
-    <div class="layui-header">
-      <div class="layui-logo" style="font-size: 19px;">博客后台</div>
-      <ul class="layui-nav layui-layout-left">
-        <li class="layui-nav-item"><a href="">网站前台</a></li>
-      </ul>
-      <ul class="layui-nav layui-layout-right">
-        <li class="layui-nav-item">
-          <a href="javascript:;">
-            <img :src="imgPhoto" class="layui-nav-img">
-            {{user.username}}
-          </a>
-          <dl class="layui-nav-child">
-            <dd><a href="">清除缓存</a></dd>
-            <dd><a href="javascript:;" @click="logout()">退出</a></dd>
-          </dl>
-        </li>
-      </ul>
-    </div>
-    <div class="layui-side layui-bg-black">
-      <div class="layui-side-scroll">
-        <ul class="layui-nav layui-nav-tree" layui-filter="main_nav" id="nav">
-          <template v-for="(menu,index) in menus" v-if="menu.parentId == 0 && menu.hide === 0">
-            <li :class="index == 0 ? 'layui-nav-item layui-nav-itemed' : 'layui-nav-item'">
-              <a href="javascript:;"><i class="layui-icon">&#xe68e;</i>&nbsp;&nbsp;{{menu.name}}</a>
-              <dl class="layui-nav-child">
-                <template v-for="menu1 in menus" v-if="menu1.parentId == menu.id && menu1.hide === 0">
-                  <dd><a href="javascript:;" @click="goMenu(menu1.href,menu1.name)">&nbsp;&nbsp;{{menu1.name}}</a></dd>
+  <div id="app">
+    <el-container style="height: 100%;">
+      <el-header class="el-header">
+        <el-radio-group v-model="isCollapse" style="margin-bottom: 20px;">
+          <el-radio-button :label="false">展开</el-radio-button>
+          <el-radio-button :label="true">收起</el-radio-button>
+        </el-radio-group>
+        <marquee class="marquee"
+          scrollamount ="5"
+          onmouseover=this.stop()
+          onmouseout=this.start()
+          >欢迎进入LGQ博客后台管理系统</marquee>
+      </el-header>
+      <el-container>
+        <el-aside :class="isCollapse ? 'asid1' : 'asid2'">
+          <el-menu
+            :collapse="isCollapse"
+            default-active="2"
+            class="el-menu-box"
+            style="height: 100%;max-width: 220px"
+            background-color="rgb(57, 61, 73)"
+            text-color="#fff"
+            active-text-color="#ffd04b">
+            <template v-for="(menu,index) in menus" v-if="menu.parentId == 0 && menu.hide === 0">
+              <el-submenu :index="menu.href">
+                <template slot="title">
+                  <i :class="index == 0 ? 'el-icon-location' : 'el-icon-menu'"></i>
+                  <span>{{menu.name}}</span>
                 </template>
-              </dl>
-            </li>
-          </template>
-        </ul>
-      </div>
-    </div>
-    <div class="layui-body">
-      <div class="layui-tab" lay-filter="top_tab">
-        <ul class="layui-tab-title" style="padding: 0 10px;">
-            <template v-for="(topMenu,index) in topMenus">
-              <li :class="index == chooseTopIndex ? 'layui-this' : ''">
-                <label>{{topMenu.name}}</label>
-                <!--<i class="layui-icon layui-unselect layui-tab-close" @click="deleteTopMenu(index)">ဆ</i>-->
-              </li>
+                <el-menu-item-group>
+                  <template v-for="(menu1,index1) in menus" v-if="menu1.parentId == menu.id && menu1.hide === 0">
+                    <el-menu-item  :index="menu1.href" @click="goMenu(menu1.href,menu1.name)">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{menu1.name}}</el-menu-item>
+                  </template>
+                </el-menu-item-group>
+              </el-submenu>
             </template>
-        </ul>
-        <div class="layui-tab-content" style="padding: 0;">
-            <router-view></router-view>
-        </div>
-      </div>
-    </div>
-    <div class="layui-footer" style="text-align: center">
-      Design  by   刘国强个人博客   吉ICP备18002404号
-    </div>
+          </el-menu>
+        </el-aside>
+        <el-container>
+          <el-main>
+            <div v-if="topMenus && topMenus.length > 0">
+              <el-tabs v-model="activeMenu" type="card" @tab-click="goTopMenu">
+                <template v-for="topMenu in topMenus">
+                  <el-tab-pane :label="topMenu.name" :name="topMenu.name"></el-tab-pane>
+                </template>
+              </el-tabs>
+              <div>
+                <router-view></router-view>
+              </div>
+            </div>
+          </el-main>
+          <el-footer style="text-align: center">
+              Design  by   刘国强个人博客   吉ICP备18002404号
+          </el-footer>
+        </el-container>
+      </el-container>
+    </el-container>
+
   </div>
 </template>
 <script>
@@ -62,7 +67,7 @@
     name: 'App',
     data () {
       return {
-        element:{},
+        isCollapse: false,
         home:"SystemMenu",
         page:0,
         pageSize:10,
@@ -70,61 +75,50 @@
         user:{},
         imgPhoto:"",
         chooseTopIndex:0,
-        topMenus:[{"name":"首页","href":"/"}]
+        topMenus:[{"name":"首页","href":"/"}],
+        activeMenu: '首页'
       }
     },
     mounted:function(){
-      var that = this;
-      that.user = {"username":"lgq"};
-      that.imgPhoto = Web.getSrc("gaga.jpg");
-      that.$router.push("/");
-      that.init(function () {
-        layui.use('element', function(){
-          var element = layui.element;
-          element.on('tab(top_tab)', function(data){
-            that.goTopMenu(data.index);
-          });
-          element.render("nav","main_nav");
-        });
-      });
+      window.vue = this;
+      this.user = {"username":"lgq"};
+      this.imgPhoto = Web.getSrc('/index/img/gaga.jpg');
+      this.$router.push("/");
+      this.init();
     },
     methods: {
-      init:function(callback){
-        var that = this;
+      init:function(){
         var data = {
-          page:that.page,
-          pageSize:that.pageSize
-        }
-        Web.post(Web.host + "/api/"+ that.home + "/search.do",data,function (res) {
-          if(res.status){
-            if(that.page == 0){
-              that.menus = res.data;
-              Web.setValue("menus",that.menus);
-              if(callback){
-                callback();
+          page:this.page,
+          pageSize:this.pageSize
+        };
+        this.axios.get(Web.host + "/api/"+ this.home + "/search.do", data)
+          .then(res =>{
+            if(res.status){
+              if(this.page == 0){
+                this.menus = res.data.data;
+              }else{
+                this.menus = res.data.data.content
               }
-            }else{
-              that.menus = res.data.content
             }
-          }
+          })
+          .catch(err =>{
+            console.log(err);
         })
       },
       logout:function () {
         Web.logout(Web.host+"/index.do");
       },
-      goTopMenu:function(index){
-        var that = this;
-        that.chooseTopIndex = index;
-        that.$router.push(that.topMenus[that.chooseTopIndex].href);
-        that.$forceUpdate();
-
+      goTopMenu:function(tab,event){
+        this.chooseTopIndex = tab.index;
+        this.$router.push(this.topMenus[this.chooseTopIndex].href);
+        this.$forceUpdate();
       },
       goMenu:function (href,name) {
-        var that = this;
         var flag = false;
-        for(var i = 0;i<that.topMenus.length;i++){
-          if(href === that.topMenus[i].href){
-            that.chooseTopIndex = i;
+        for(var i = 0;i<this.topMenus.length;i++){
+          if(href === this.topMenus[i].href){
+            this.chooseTopIndex = i;
             flag = true;
             break;
           }
@@ -134,13 +128,32 @@
             name:name,
             href:href
           };
-          that.topMenus.push(data);
-          that.chooseTopIndex = that.topMenus.length-1;
+          this.topMenus.push(data);
+          this.chooseTopIndex = this.topMenus.length-1;
         }
-        that.$router.push(href);
-        that.$forceUpdate();
+        this.activeMenu = name;
+        this.$router.push(href);
+        this.$forceUpdate();
       }
     }
   }
 
 </script>
+<style>
+  .el-header{
+    background-color: #23262E;
+    color: white;
+    text-align: center;
+    line-height: 60px;
+  }
+  .marquee{
+    color:white;
+    font-size: 12px;
+  }
+  .asid1{
+    max-width: 65px;
+  }
+  .asid2{
+    max-width: 220px;
+  }
+</style>
