@@ -30,7 +30,7 @@
                 </template>
                 <el-menu-item-group>
                   <template v-for="(menu1,index1) in menus" v-if="menu1.parentId == menu.id && menu1.hide === 0">
-                    <el-menu-item  :index="menu1.href" @click="goMenu(menu1.href,menu1.name)">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{menu1.name}}</el-menu-item>
+                    <el-menu-item  :index="menu1.href" @click="goMenu(menu1.href,menu1.name)">&nbsp;&nbsp;&nbsp;&nbsp;<i class="el-icon-star-off"></i>{{menu1.name}}</el-menu-item>
                   </template>
                 </el-menu-item-group>
               </el-submenu>
@@ -100,6 +100,7 @@
               }else{
                 this.menus = res.data.data.content
               }
+              Web.setValue("menus",this.menus)
             }
           })
           .catch(err =>{

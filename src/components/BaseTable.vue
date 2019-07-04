@@ -4,12 +4,14 @@
       :data="tableData"
       stripe
       border
+      center
       v-loading="load"
-      :header-cell-style="{background:'#F3F4F7',color:'#555'}"
+      :header-cell-style="headerCellStyle"
       :row-style="rowStyle"
       :cell-style="cellStyle"
       style="font-size: 14px"
       @selection-change="handleSelectionChange"
+      @cell-dblclick="copyCellData"
       empty-text="当前数据没有，请添加数据">
       <slot/>
     </el-table>
@@ -41,6 +43,11 @@
           return {"height": "28px","line-height": "28px","padding": "5px 0"}
         }
       },
+      headerCellStyle:{
+        default() {
+          return {"text-align": "center",background:'#F3F4F7',color:'#555'}
+        }
+      }
     },
     data(){
       return{
@@ -52,8 +59,12 @@
     },
     methods:{
       filData(data){
-        this.tableData = data.row;
-        this.page = data
+        this.tableData = data.content;
+        this.page = {
+          pageNum: data.pageable.pageNumber+1,
+          pageSize: data.pageable.pageSize,
+          total: data.totalElements
+        }
         return this
       },
       wait() {
@@ -79,6 +90,9 @@
       handelPrev(val) {
         this.$emit('change-prev', val)
       },
+      copyCellData(row, column, cell, event){
+        this.$emit('cell-dblclick', row, column, cell, event)
+      }
     },
     components: {
       BasePagination

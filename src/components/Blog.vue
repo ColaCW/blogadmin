@@ -12,10 +12,11 @@
           </el-button>
         </div>
       </div>
-      <baseTable ref="table" style="width: 100%" @chaneg-size="changeSizeHandle" @chaneg-page="changePageHandle">
+      <baseTable ref="table" style="width: 100%" @chaneg-size="changeSizeHandle" @chaneg-page="changePageHandle" @cell-dblclick="copyCellData">
         <el-table-column type="selection" width="55" align="center"></el-table-column>
+        <el-table-column prop="id" label="ID" min-width="150" :show-overflow-tooltip="true"></el-table-column>
         <el-table-column prop="name" label="标题" min-width="150" :show-overflow-tooltip="true"></el-table-column>
-        <el-table-column prop="categoryId" label="分类" min-width="80" align="center" :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column prop="blogCategoryObj.name" label="分类" min-width="80" align="center" :show-overflow-tooltip="true"></el-table-column>
         <el-table-column prop="viewNum" label="观看数" min-width="80" align="center" :show-overflow-tooltip="true"></el-table-column>
         <el-table-column prop="likeNum" label="点赞数" min-width="80" align="center" :show-overflow-tooltip="true"></el-table-column>
         <el-table-column prop="status" label="发布状态" min-width="150" align="center" :show-overflow-tooltip="true">
@@ -56,7 +57,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer" align="center">
         <el-button @click="searchDialogStatus = false">取 消</el-button>
-        <el-button type="primary" @click="">确 定</el-button>
+        <el-button type="primary" @click="doSearch();searchDialogStatus = false">确 定</el-button>
       </div>
     </el-dialog>
     <!--搜索区-->
@@ -74,7 +75,6 @@
         homeName:"博客",
         token:Web.getToken(),
         rule:Web.getValue("rule") == '1',
-        editDialogStatus:false,
         searchDialogStatus: false,
         //查询表单
         searchform: {
@@ -94,7 +94,6 @@
           resource: '',
           desc: ''
         },
-        tableData:[],
       }
     },
     components: {
@@ -168,7 +167,7 @@
                   });
                 }
               })
-          })
+          }).catch(() => {})
         }else{
           that.$message({
             showClose: true,
@@ -228,6 +227,28 @@
             }
           })
       },
+      //双击表格复制文本
+      copyCellData(row, column, cell, event){
+        let that = this;
+        let text = $(cell).children(".cell").html();
+        if(window.clipboardData){
+          window.clipboardData.setData('text',text);
+        }else{
+          (function(s){
+            document.oncopy=function(e){
+              e.clipboardData.setData('text',text);
+              e.preventDefault();
+              document.oncopy=null;
+            }
+          })(text);
+          document.execCommand('Copy');
+        }
+        that.$message({
+          showClose: true,
+          message: '复制成功',
+          type: 'success'
+        });
+      },
       //重置表单
       resetForm(formName) {
         let that = this;
@@ -252,9 +273,4 @@
   .container {
     padding: 10px 20px;
   }
-  .searchformbox {
-    border: 1px solid #ddd;
-    padding: 10px;
-  }
-
 </style>
