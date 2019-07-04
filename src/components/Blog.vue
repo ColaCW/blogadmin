@@ -1,314 +1,260 @@
 <template>
-  <div>
-
-    <div style="margin-top: 10px;padding-left: 20px;">
-      <button class="layui-btn" @click="showBox('.search-box')">
-        <i class="layui-icon">&#xe615;</i> 搜索
-      </button>
-      <button class="layui-btn" @click="goAddBlog('')">
-        <i class="layui-icon">&#xe608;</i> 添加
-      </button>
-      <button class="layui-btn" @click="deleteAll()">
-        <i class="layui-icon">&#x1006;</i> 删除
-      </button>
-    </div>
-
-    <table class="layui-hide" id="Blog" :lay-filter="home"></table>
-    <script type="text/html" id="operation">
-      <a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>编辑</a>
-      <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</a>
-    </script>
-    <div class="search-box">
-      <div class="box-head">
-        <div class="head-title">搜索</div>
-        <div class="close"><img src="../../static/img/close.png" style="width: 20px;" @click="closeBox('.search-box')"/></div>
-        <div style="clear: both"></div>
-        <hr style="width: 100%;height: 1px;padding: 0;background-color: #b1a9a9;"/>
-      </div>
-      <div>
-        <div class="layui-col-md6">
-          <label>ID:</label>
-          <input type="text" v-model="obj.id"/>
+  <div class="container">
+    <!--表格数据-->
+    <div class="table">
+      <div class="tableHead">
+        <div class="btnGroup" v-if="rule">
+          <el-button type="primary" size="medium" icon="el-icon-search"  @click="searchDialogStatus = true" >查询
+          </el-button>
+          <el-button type="primary" size="medium" icon="el-icon-plus"  @click="goAddHtml('')" >新增
+          </el-button>
+          <el-button type="primary" size="medium" icon="el-icon-delete"  @click="doDelete()" >删除
+          </el-button>
         </div>
-        <div class="layui-col-md6">
-          <label>Name:</label>
-          <input type="text" v-model="obj.name"/>
-        </div>
-        <div style="clear: both"></div>
       </div>
-      <div style="text-align: center;margin-top: 30px;">
-        <button class="layui-btn" @click="doSearch()">搜索</button>
-        <button class="layui-btn" @click="closeBox('.search-box')">取消</button>
-      </div>
+      <baseTable ref="table" style="width: 100%" @chaneg-size="changeSizeHandle" @chaneg-page="changePageHandle">
+        <el-table-column type="selection" width="55" align="center"></el-table-column>
+        <el-table-column prop="name" label="标题" min-width="150" :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column prop="categoryId" label="分类" min-width="80" align="center" :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column prop="viewNum" label="观看数" min-width="80" align="center" :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column prop="likeNum" label="点赞数" min-width="80" align="center" :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column prop="status" label="发布状态" min-width="150" align="center" :show-overflow-tooltip="true">
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.status"
+              active-text="已发布"
+              inactive-text="未发布"
+              active-value="2"
+              inactive-value="0"
+              @change="changeStatus($event,scope.row)"
+            >
+            </el-switch>
+          </template>
+        </el-table-column>
+        <el-table-column prop="createAt" label="发布时间" min-width="150" align="center" :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column label="操作" min-width="150" :show-overflow-tooltip="true" align="center" v-if="rule">
+          <template slot-scope="scope">
+            <el-button type="primary" size="mini" icon="el-icon-edit-outline"  @click="goAddHtml(scope.row)" >编辑
+            </el-button>
+            <el-button type="danger" size="mini" icon="el-icon-delete"  @click="doDelete(scope.row)" >删除
+            </el-button>
+          </template>
+        </el-table-column>
+      </baseTable>
     </div>
-    <div class="wrap"></div>
+    <!--表格数据-->
+
+    <!--搜索区-->
+    <el-dialog :title="'搜索'+homeName" :visible.sync="searchDialogStatus" width="505px">
+      <el-form :inline="true" :model="searchform" ref="searchform">
+        <el-form-item label="ID">
+          <el-input v-model="searchform.id"></el-input>
+        </el-form-item>
+        <el-form-item label="标题">
+          <el-input v-model="searchform.name"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer" align="center">
+        <el-button @click="searchDialogStatus = false">取 消</el-button>
+        <el-button type="primary" @click="">确 定</el-button>
+      </div>
+    </el-dialog>
+    <!--搜索区-->
   </div>
 </template>
-<script>
 
+<script>
   import { Web } from "../../static/js/web.js";
-  import Blog from './Blog.vue'
+  import BaseTable from '@/components/BaseTable';
 
   export default {
-    data () {
+    data() {
       return {
         home:"Blog",
+        homeName:"博客",
         token:Web.getToken(),
-        cols:[
-          {type:'checkbox'}
-          ,{field:'id', title: 'ID'}
-          ,{field:'name', title: '名称'}
-          ,{field:'categoryId', title: '分类'}
-          ,{field:'viewNum', title: '观看数'}
-          ,{field:'likeNum', title: '点赞数'}
-          ,{field:'status', title: '状态',templet: function (d) {
-            if(d.status === "0"){
-              return "已下线";
-            }else if(d.status === "1"){
-              return "编辑中";
-            }else if(d.status === "2"){
-              return "已发布";
-            }
-            }}
-          ,{ align:'center', toolbar: '#operation', title: '操作'}
-        ],
-        tableData:null,
-        page:1,
-        pageSize:10,
-        menus:[],
-        //编辑对象
-        obj:{
-          id:"",
-          name:"",
-          content:"",
-          markdown:"",
-          categoryId:"",
-          viewNum:"",
-          likeNum:"",
-          status:"",
-          ip:"",
-          userAgent:"",
-          remark:"",
-          createAt:"",
-          createBy:"",
-          updateAt:"",
-          updateBy:"",
-          deleteAt:"",
-          deleteBy:"0"
+        rule:Web.getValue("rule") == '1',
+        editDialogStatus:false,
+        searchDialogStatus: false,
+        //查询表单
+        searchform: {
+          id: '',
+          name: '',
+          page:1,
+          pageSize:10
         },
-        allData:[],//总数据
-        chooseArray:[],//复选框选中数据
+        //新增表单
+        addform: {
+          name: '',
+          region: '',
+          date1: '',
+          date2: '',
+          delivery: false,
+          type: [],
+          resource: '',
+          desc: ''
+        },
+        tableData:[],
       }
     },
-    mounted:function(){
-      var that = this;
-      layui.use('table', function(){
-        var table = layui.table;
-        that.tableData = table.render({
-          elem: '#' + that.home,
-          url:Web.host + "/api/"+ that.home + "/search.do",
-          method:"post",
-          contentType: 'application/json',
-          where:{id:that.obj.id,name:that.obj.name},
-          cols: [that.cols],
-          page: true,
-          request: {
-            pageName: 'page', //页码的参数名称，默认：page
-            limitName: 'pageSize' //每页数据量的参数名，默认：limit
-          },
-          response: {
-            statusCode: true //规定成功的状态码，默认：0
-          },
-          parseData: function(res){ //将原始数据解析成 table 组件所规定的数据
-            return {
-              "code": res.status, //解析接口状态
-              "msg": res.message, //解析提示文本
-              "count": res.data.totalElements, //解析数据长度
-              "data": res.data.content //解析数据列表
-            };
-          },
-          done:function (res,curr) {
-            if(res.code){
-              that.allData = res.data;
-              that.page = curr
-            }
-          }
-        });
-        table.on('tool('+ that.home +')', function(obj){
-          var data = obj.data;
-          if(obj.event === 'del'){
-            layer.open({
-              content:  '<div style="text-align: center">确认删除吗</div>',
-              shadeClose:true,
-              btnAlign: 'c',
-              btn: ['确定', '取消'],
-              yes: function(index){
-                that.doDelete(data.id,function () {
-                  that.doSearch();
-                  layer.close(index);
-                });
-              },
-              function(index){
-                layer.close(index);
-              }
-            });
-          } else if(obj.event === 'edit'){
-            that.obj = data;
-            that.goAddBlog(that.obj.id);
-          }
-        });
-        table.on('checkbox('+ that.home +')', function(obj){
-          if(obj.type == 'one'){
-            if(obj.checked){
-              that.chooseArray.push(obj.data)
-            }else{
-              Web.removeObj(obj.data,that.chooseArray);
-            }
-          }else if(obj.type == 'all'){
-            if(obj.checked){
-              that.chooseArray = that.allData;
-            }else{
-              that.chooseArray = [];
-            }
-          }
-        });
-      });
-      that.menus = Web.getValue("menus");
+    components: {
+      'baseTable': BaseTable
+    },
+    mounted: function () {
+      let that = this;
+      window.vue = that;
+      that.rule = true;
+      that.init();
     },
     methods: {
-      initObj:function(){
-        var that = this;
-        that.obj={
-          id:"",
-          name:"",
-          content:"",
-          markdown:"",
-          categoryId:"",
-          viewNum:"",
-          likeNum:"",
-          status:"",
-          ip:"",
-          userAgent:"",
-          remark:"",
-          createAt:"",
-          createBy:"",
-          updateAt:"",
-          updateBy:"",
-          deleteAt:"",
-          deleteBy:"0"
+      init(){
+        let that = this;
+        that.doSearch();
+      },
+      //新增数据
+      doCreate(){
+        let that = this;
+        that.addform = {
+          name: '',
+          region: '',
+          date1: '',
+          date2: '',
+          delivery: false,
+          type: [],
+          resource: '',
+          desc: ''
         };
+        that.addDialogStatus = true;
       },
-      goAddBlog:function(id){
-        window.open("static/addBlog.html?id="+id);
-      },
-      doCreate:function () {
-        var that = this;
-        var data = {
-          token:that.token,
-          obj:that.obj
+      //删除数据
+      doDelete(row){
+        let that = this;
+        let table = that.$refs["table"];
+        if(row){
+          table.chooseArray = [row];
         }
-        Web.post(Web.host + "/api/"+ that.home + "/create.do",data,function (res) {
-          if(res.status){
-            Web.showToast("添加成功",2000);
-            that.closeBox(".create-box");
-            that.initObj();
-            that.doSearch();
-          }else{
-            layer.alert("添加失败");
-          }
-        })
-      },
-      doDelete:function(id,callback){
-        var that = this;
-        var data = {
-          token:that.token,
-          id:id
-        };
-        Web.post(Web.host + "/api/"+ that.home + "/delete.do",data,function (res) {
-            if(res.status){
-              if(callback){
-                callback();
+        if(table.chooseArray.length > 0){
+          that.$confirm('确定删除这'+ table.chooseArray.length +'条数据?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            center: true,
+            type: 'warning'
+          }).then(() => {
+            var id = "";
+            for(let i = 0;i<table.chooseArray.length;i++){
+              if(i > 0){
+                id+=","
               }
-            }else{
-              layer.close();
-              layer.alert("删除失败");
+              id+=table.chooseArray[i].id
             }
-        })
-      },
-      deleteAll: function () {
-        var that = this;
-        if (that.chooseArray.length == 0) {
-          Web.showToast("请选择要删除的数据", 2000);
-          return
+            var data = {
+              token:that.token,
+              id:id
+            };
+            that.axios.post(Web.host + "/api/"+ that.home + "/delete.do", data)
+              .then(function (res) {
+                if(res.data.status){
+                  that.$message({
+                    type: 'success',
+                    message: '删除成功'
+                  });
+                  that.searchform.page = 1;
+                  that.doSearch();
+                }else{
+                  that.$message({
+                    showClose: true,
+                    message: '删除失败,请联系管理员',
+                    type: 'error'
+                  });
+                }
+              })
+          })
+        }else{
+          that.$message({
+            showClose: true,
+            message: '请选择删除项',
+            type: 'error'
+          });
         }
-        var ids = "";
-        for (var i = 0; i < that.chooseArray.length; i++) {
-          if (i > 0) {
-            ids += ","
-          }
-          ids += that.chooseArray[i].id
-        }
-        that.doDelete(ids, function () {
-          Web.showToast("删除成功", 2000);
-          that.doSearch();
-        })
       },
-      doUpdate:function(){
-        var that = this;
-        var data = {
-          token:that.token,
-          obj:that.obj
-        }
-        Web.post(Web.host + "/api/"+ that.home + "/update.do",data,function (res) {
-          if(res.status){
-            Web.showToast("修改成功",2000);
-            that.closeBox(".edit-box");
-            that.initObj();
-            that.doSearch();
-          }else{
-            layer.alert("修改失败");
-          }
-        })
+      //前往编辑页面
+      goAddHtml(row){
+        window.open("static/addBlog.html?id="+row.id);
       },
-      doSearch:function () {
-        var that = this;
-        that.chooseArray = [];
-        that.tableData.reload({
-          where: {
-            id:that.obj.id,
-            name:that.obj.name
-          },
-          page: {
-            curr: that.page
-          },
-          done: function(res){
-            if(res.code){
-              $(".search-box").hide();
-              $(".wrap").hide()
+      //查询数据
+      doSearch() {
+        let that = this;
+        let table = that.$refs["table"];
+        table.wait();
+        that.axios.post(Web.host + "/api/"+ that.home + "/search.do", that.searchform)
+          .then(function (res) {
+            if(res.data.status){
+              table.complete().filData(res.data.data);
             }else{
-              layer.alert("查询失败");
+              that.$message({
+                showClose: true,
+                message: '查询失败,请联系管理员',
+                type: 'error'
+              });
             }
-          }
-        });
-        that.$forceUpdate();
+
+          })
       },
-      showBox:function (boxClassName) {
-        var that = this;
-        that.initObj();
-        $(boxClassName).show();
-        $(".wrap").show();
+      //切换发布状态
+      changeStatus(status,obj){
+        let that = this;
+        let table = that.$refs["table"];
+        table.wait();
+        obj.status = status;
+        let data = {
+          obj:obj,
+          token:that.token
+        };
+        that.axios.post(Web.host + "/api/"+ that.home + "/update.do", data)
+          .then(function (res) {
+            table.complete();
+            if(res.data.status){
+              that.$message({
+                showClose: true,
+                message: '切换成功',
+                type: 'success'
+              });
+            }else{
+              that.$message({
+                showClose: true,
+                message: '切换失败',
+                type: 'error'
+              });
+            }
+          })
       },
-      closeBox:function (boxClassName) {
-        $(boxClassName).hide();
-        $(".wrap").hide()
+      //重置表单
+      resetForm(formName) {
+        let that = this;
+        that.$refs[formName].resetFields();
       },
-      compile:function(){
-        var text = document.getElementById("content").value;
-        var converter = new showdown.Converter();
-        var html = converter.makeHtml(text);
-        document.getElementById("result").innerHTML = html;
+      //改变条数
+      changeSizeHandle(size){
+        let that = this;
+        that.searchform.pageSize = size;
+        that.doSearch();
+      },
+      //跳转页数
+      changePageHandle(page){
+        let that = this;
+        that.searchform.page = page;
+        that.doSearch();
       }
     }
   }
-
 </script>
+<style>
+  .container {
+    padding: 10px 20px;
+  }
+  .searchformbox {
+    border: 1px solid #ddd;
+    padding: 10px;
+  }
+
+</style>
