@@ -15,15 +15,20 @@
       <baseTable ref="table" style="width: 100%" @chaneg-size="changeSizeHandle" @chaneg-page="changePageHandle" @cell-dblclick="copyCellData">
         <el-table-column type="selection" width="55" align="center"></el-table-column>
         <el-table-column prop="id" label="ID" min-width="80" align="center" :show-overflow-tooltip="true"></el-table-column>
-        <el-table-column prop="name" label="名称" min-width="150" align="center" :show-overflow-tooltip="true"></el-table-column>
-        <el-table-column prop="href" label="链接" min-width="150" align="center" :show-overflow-tooltip="true"></el-table-column>
-        <el-table-column prop="hide" label="隐藏" min-width="150" align="center" :show-overflow-tooltip="true">
+        <el-table-column prop="username" label="用户名" min-width="150" align="center" :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column prop="realname" label="真实姓名" min-width="150" align="center" :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column prop="mobile" label="电话" min-width="150" align="center" :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column prop="gender" label="性别" min-width="150" align="center" :show-overflow-tooltip="true">
           <template slot-scope="scope">
-            {{scope.row.hide == 1 ? '是':'否'}}
+            {{scope.row.gender == 0 ? '未知':scope.row.type == 1 ? '男' : '女'}}
           </template>
         </el-table-column>
-        <el-table-column prop="remark" label="备注" min-width="150" align="center" :show-overflow-tooltip="true"></el-table-column>
-        <el-table-column prop="seq" label=排序 min-width="150" align="center" :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column prop="roleId" label="角色ID" min-width="150" align="center" :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column prop="status" label="状态" min-width="150" align="center" :show-overflow-tooltip="true">
+          <template slot-scope="scope">
+            {{scope.row.status == 0 ? '禁用':'有效'}}
+          </template>
+        </el-table-column>
         <el-table-column prop="createAt" label="创建时间" min-width="150" align="center" :show-overflow-tooltip="true"></el-table-column>
         <el-table-column label="操作" min-width="150" :show-overflow-tooltip="true" v-if="rule">
           <template slot-scope="scope">
@@ -43,30 +48,35 @@
         <el-form-item prop="id" label="ID" >
           <el-input v-model="addform.id" style="width: 220px!important" disabled></el-input>
         </el-form-item>
-        <el-form-item prop="parentId" label="父节点" >
-          <el-select v-model="addform.parentId" placeholder="请选择" style="width: 220px!important">
-            <template v-for="menu in menus">
-              <el-option :key="menu.id" :label="menu.name" :value="menu.id"></el-option>
-            </template>
-          </el-select>
+        <el-form-item prop="userId" label="用户id" >
+          <el-input v-model="addform.userId" style="width: 220px!important"></el-input>
         </el-form-item>
-        <el-form-item prop="name" label="名称" >
-          <el-input v-model="addform.name" style="width: 220px!important"></el-input>
+        <el-form-item prop="username" label="用户名" >
+          <el-input v-model="addform.username" style="width: 220px!important"></el-input>
         </el-form-item>
-        <el-form-item prop="href" label="链接" >
-          <el-input v-model="addform.href" style="width: 220px!important"></el-input>
+        <el-form-item prop="realname" label="真实姓名" >
+          <el-input v-model="addform.realname" style="width: 220px!important"></el-input>
         </el-form-item>
-        <el-form-item prop="hide" label="隐藏" >
-          <el-select v-model="addform.hide" placeholder="请选择" style="width: 220px!important">
-            <el-option key="0" label="否" value="0"></el-option>
-            <el-option key="1" label="是" value="1"></el-option>
-          </el-select>
+        <el-form-item prop="email" label="电子邮箱" >
+          <el-input v-model="addform.email" style="width: 220px!important"></el-input>
         </el-form-item>
-        <el-form-item prop="remark" label="备注" >
-          <el-input v-model="addform.remark" style="width: 220px!important"></el-input>
+        <el-form-item prop="mobile" label="电话" >
+          <el-input v-model="addform.mobile" style="width: 220px!important"></el-input>
         </el-form-item>
-        <el-form-item prop="seq" label="排序" >
-          <el-input v-model="addform.seq" style="width: 220px!important"></el-input>
+        <el-form-item prop="password" label="密码" >
+          <el-input v-model="addform.password" style="width: 220px!important"></el-input>
+        </el-form-item>
+        <el-form-item prop="gender" label="性别" >
+          <el-input v-model="addform.gender" style="width: 220px!important"></el-input>
+        </el-form-item>
+        <el-form-item prop="photo" label="头像" >
+          <el-input v-model="addform.photo" style="width: 220px!important"></el-input>
+        </el-form-item>
+        <el-form-item prop="roleId" label="角色ID" >
+          <el-input v-model="addform.roleId" style="width: 220px!important"></el-input>
+        </el-form-item>
+        <el-form-item prop="status" label="状态" >
+          <el-input v-model="addform.status" style="width: 220px!important"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -78,34 +88,36 @@
 
     <!--编辑区-->
     <el-dialog :title="'编辑'+homeName" :visible.sync="editDialogStatus" width="700px">
-      <el-form :model="editform" ref="editform" :inline="true" label-width="80px">
+      <el-form :model="editform" ref="editform" :inline="true" label-width="90px">
         <el-form-item prop="id" label="ID" >
           <el-input v-model="editform.id" style="width: 220px!important" disabled></el-input>
         </el-form-item>
-        <el-form-item prop="parentId" label="父节点" >
-          <el-select v-model="editform.parentId" placeholder="请选择" style="width: 220px!important">
-            <template v-for="menu in menus">
-              <el-option :key="menu.id" :label="menu.name" :value="menu.id"></el-option>
-            </template>
-          </el-select>
+        <el-form-item prop="username" label="用户名" >
+          <el-input v-model="editform.username" style="width: 220px!important"></el-input>
         </el-form-item>
-        <el-form-item prop="name" label="名称" >
-          <el-input v-model="editform.name" style="width: 220px!important"></el-input>
+        <el-form-item prop="realname" label="真实姓名" >
+          <el-input v-model="editform.realname" style="width: 220px!important"></el-input>
         </el-form-item>
-        <el-form-item prop="href" label="链接" >
-          <el-input v-model="editform.href" style="width: 220px!important"></el-input>
+        <el-form-item prop="email" label="电子邮箱" >
+          <el-input v-model="editform.email" style="width: 220px!important"></el-input>
         </el-form-item>
-        <el-form-item prop="hide" label="隐藏" >
-          <el-select v-model="editform.hide" placeholder="请选择" style="width: 220px!important">
-            <el-option key="0" label="否" value="0"></el-option>
-            <el-option key="1" label="是" value="1"></el-option>
-          </el-select>
+        <el-form-item prop="mobile" label="电话" >
+          <el-input v-model="editform.mobile" style="width: 220px!important"></el-input>
         </el-form-item>
-        <el-form-item prop="remark" label="备注" >
-          <el-input v-model="editform.remark" style="width: 220px!important"></el-input>
+        <el-form-item prop="password" label="密码" >
+          <el-input v-model="editform.password" style="width: 220px!important"></el-input>
         </el-form-item>
-        <el-form-item prop="seq" label="排序" >
-          <el-input v-model="editform.seq" style="width: 220px!important"></el-input>
+        <el-form-item prop="gender" label="性别" >
+          <el-input v-model="editform.gender" style="width: 220px!important"></el-input>
+        </el-form-item>
+        <el-form-item prop="photo" label="头像" >
+          <el-input v-model="editform.photo" style="width: 220px!important"></el-input>
+        </el-form-item>
+        <el-form-item prop="roleId" label="角色ID" >
+          <el-input v-model="editform.roleId" style="width: 220px!important"></el-input>
+        </el-form-item>
+        <el-form-item prop="status" label="状态" >
+          <el-input v-model="editform.status" style="width: 220px!important"></el-input>
         </el-form-item>
         <el-form-item label="创建时间" >
           <el-date-picker v-model="editform.createAt" type="datetime" placeholder="选择创建时间"></el-date-picker>
@@ -133,8 +145,8 @@
         <el-form-item label="ID">
           <el-input v-model="searchform.id"></el-input>
         </el-form-item>
-        <el-form-item label="标题">
-          <el-input v-model="searchform.name"></el-input>
+        <el-form-item label="用户名">
+          <el-input v-model="searchform.username"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer" align="center">
@@ -154,8 +166,8 @@
     data() {
       return {
         token:Web.getToken(),
-        home:"SystemMenu",
-        homeName:'系统菜单',
+        home:"User",
+        homeName:'用户',
         rule:Web.getValue("rule") == '1',
         addDialogStatus: false,
         editDialogStatus:false,
@@ -163,29 +175,35 @@
         //查询表单
         searchform: {
           id: '',
-          name: '',
+          username: '',
           page:1,
           pageSize:10
         },
         //新增表单
         addform: {
           id:"",
-          parentId:"",
-          name:"",
-          href:"",
-          hide:"0",
-          remark:"",
-          seq:"",
+          username:"",
+          realname:"",
+          email:"",
+          mobile:"",
+          password:"",
+          gender:"",
+          photo:"",
+          roleId:"",
+          status:"",
         },
         //修改表单
         editform:{
           id:"",
-          parentId:"",
-          name:"",
-          href:"",
-          hide:"",
-          remark:"",
-          seq:"",
+          username:"",
+          realname:"",
+          email:"",
+          mobile:"",
+          password:"",
+          gender:"",
+          photo:"",
+          roleId:"",
+          status:"",
           createAt:"",
           createBy:"",
           updateAt:"",

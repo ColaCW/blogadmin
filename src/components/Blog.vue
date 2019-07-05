@@ -157,6 +157,7 @@
                     type: 'success',
                     message: '删除成功'
                   });
+                  table.chooseArray = [];
                   that.searchform.page = 1;
                   that.doSearch();
                 }else{

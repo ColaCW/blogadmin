@@ -12,7 +12,7 @@
           </el-button>
         </div>
       </div>
-      <baseTable ref="table" style="width: 100%" @chaneg-size="changeSizeHandle" @chaneg-page="changePageHandle">
+      <baseTable ref="table" style="width: 100%" @chaneg-size="changeSizeHandle" @chaneg-page="changePageHandle" @cell-dblclick="copyCellData">
         <el-table-column type="selection" width="55" align="center"></el-table-column>
         <el-table-column prop="name" label="名称" min-width="150" align="center" :show-overflow-tooltip="true"></el-table-column>
         <el-table-column prop="status" label="状态" min-width="150" align="center" :show-overflow-tooltip="true">
@@ -144,10 +144,6 @@
           name: '',
           status: '0',
           remark: '',
-          createAt: '',
-          createBy: '',
-          updateAt: '',
-          updateBy: ''
         },
         //修改表单
         editform:{
@@ -236,6 +232,7 @@
                     type: 'success',
                     message: '删除成功'
                   });
+                  table.chooseArray = [];
                   that.searchform.page = 1;
                   that.doSearch();
                 }else{
@@ -300,6 +297,28 @@
               });
             }
           })
+      },
+      //双击表格复制文本
+      copyCellData(row, column, cell, event){
+        let that = this;
+        let text = $(cell).children(".cell").html();
+        if(window.clipboardData){
+          window.clipboardData.setData('text',text);
+        }else{
+          (function(s){
+            document.oncopy=function(e){
+              e.clipboardData.setData('text',text);
+              e.preventDefault();
+              document.oncopy=null;
+            }
+          })(text);
+          document.execCommand('Copy');
+        }
+        that.$message({
+          showClose: true,
+          message: '复制成功',
+          type: 'success'
+        });
       },
       //重置表单
       resetForm(formName) {
