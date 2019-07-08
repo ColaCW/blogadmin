@@ -12,7 +12,7 @@
 <body>
 <div id="app" style="height:99%" v-cloak>
   <div class="head">
-    <div class="blog-title" v-if="id == ''">新建博客</div>
+    <div class="blog-title" v-if="blog.id == ''">新建博客</div>
     <div class="blog-title" v-else>编辑&nbsp;&nbsp;{{blog.name}}</div>
     <div style="float:right;">
       <div class="push-btn" @click="$('.releaseBoxWrap').fadeIn()">
@@ -35,7 +35,7 @@
     <div class="upload-btn" title="上传" @click="$('.uploadBoxWrap').fadeIn()">
       <img src="img/上传.png" style="width: 30px">
     </div>
-    <div class="save-btn" title="保存" @click="save(1)">
+    <div class="save-btn" title="保存" @click="doUpdate()">
       <img src="img/保存.png" style="width: 25px;margin-top:2px;margin-left: 2px;">
     </div>
     <div class="preview-btn" :title="isPreview ? '编辑':'预览'" @click="changePreview()">
@@ -45,7 +45,7 @@
   </div>
   <div class="main">
     <div class="input-region">
-      <textarea id="content" @keyup="compile()" v-model="blog.markdown"></textarea>
+      <textarea id="content" @keyup="compile()" v-model="blogDetail.markdown"></textarea>
     </div>
     <div class="result-region">
       <div id="result"></div>
@@ -84,7 +84,7 @@
         <span style="color:red;margin-left: 2px;">*</span>
       </div>
         <div class="release-btn">
-          <div class="releaseBtn" @click="save(2)">发布</div>
+          <div class="releaseBtn" @click="doCreate()">发布</div>
           <div class="cancelBtn" @click="$('.releaseBoxWrap').fadeOut()">取消</div>
           <div style="clear: both"></div>
         </div>
@@ -111,16 +111,22 @@
     el:"#app",
     data:{
       token:Web.getToken(),
-      id:"",
       isPreview:false,
       blog:{},
+      blogDetail:{
+        "blogId":"",
+        "content":"",
+        "markdown":""
+      },
       blogCategorys:[]
     },
     methods:{
       init:function () {
         var that = this;
-        that.id = Web.getParam("","id","");
-        that.doRead();
+        that.blog.id = Web.getParam("","id","");
+        if(that.blog.id.length > 0){
+          that.doRead();
+        }
         that.getBlogCategory();
       },
 
@@ -130,7 +136,7 @@
         var converter = new showdown.Converter();
         var html = converter.makeHtml(text);
         document.getElementById("result").innerHTML = html;
-        that.blog.content = html;
+        that.blogDetail.content = html;
       },
       getBlogCategory:function(){
           var that = this;
@@ -147,19 +153,29 @@
           var that = this;
           var data = {
             token:that.token,
-            id:that.id
+            id:that.blog.id
           };
           Web.post(Web.host + "/api/Blog/read.do",data,function (res) {
             if(res.status){
               that.blog = res.data;
-              that.$nextTick(function () {
-                that.compile();
-              });
+              var data1 = {
+                token:that.token,
+                blogId:that.blog.id
+              };
+              Web.post(Web.host + "/api/BlogDetail/readByBlogId.do",data1,function (res1) {
+                if(res1.status){
+                  that.blogDetail = res1.data;
+                  that.$nextTick(function () {
+                    that.compile();
+                  });
+                }
+              })
             }
           })
       },
-      doCreate:function (type) {
+      doCreate:function () {
         var that = this;
+        that.blog.status = 2;
         var data = {
           token:that.token,
           obj:that.blog
@@ -167,22 +183,23 @@
         Web.post(Web.host + "/api/Blog/create.do",data,function (res) {
           if(res.status){
             that.blog = res.data;
-            if(type == 1){
-              Web.showToast("保存成功",2000);
-            }else{
-              Web.showToast("发布成功",2000);
-              window.close();
-            }
+            that.blogDetail.blogId = that.blog.id;
+            var data1 = {
+              token:that.token,
+              obj:that.blogDetail
+            };
+            Web.post(Web.host + "/api/BlogDetail/create.do",data1,function (res1) {
+              if(res1.status){
+                Web.showToast("发布成功",2000);
+                window.close();
+              }
+            })
           }else{
-            if(type == 1){
-              Web.showToast("保存失败",2000);
-            }else{
-              Web.showToast("发布失败",2000);
-            }
+            Web.showToast("发布失败",2000);
           }
         })
       },
-      doUpdate:function (type) {
+      doUpdate:function () {
           var that = this;
           var data = {
             token:that.token,
@@ -191,31 +208,21 @@
           Web.post(Web.host + "/api/Blog/update.do",data,function (res) {
             if(res.status){
               that.blog = res.data;
-              if(type == 1){
-                Web.showToast("保存成功",2000);
-              }else{
-                Web.showToast("发布成功",2000);
-                window.close();
-              }
+              that.blogDetail.blogId = that.blog.id;
+              var data1 = {
+                token:that.token,
+                obj:that.blogDetail
+              };
+              Web.post(Web.host + "/api/BlogDetail/update.do",data1,function (res1) {
+                if(res1.status){
+                  window.history.pushState({status: 0} ,'' ,'?id='+that.blog.id);
+                  Web.showToast("保存成功",2000);
+                }
+              })
             }else{
-              if(type == 1){
-                Web.showToast("保存失败",2000);
-              }else{
-                Web.showToast("发布失败",2000);
-              }
+              Web.showToast("保存失败",2000);
             }
           })
-      },
-      save:function(type){
-        var that = this;
-        if(type == 2){
-          that.blog.status = 2;
-        }
-        if(that.blog.id && that.blog.id != ""){
-            that.doUpdate(type);
-        }else{
-            that.doCreate(type);
-        }
       },
       changePreview:function(){
         var that = this;
@@ -238,8 +245,8 @@
         Web.post(Web.host + "/api/web/uploadFile.do",data,function (res) {
           if(res.status){
             var img = "<br/>![]("+Web.getSrc(callback_data.key)+")<br/>";
-            if(typeof(that.blog.markdown) == "undefined"){
-              that.blog.markdown = "";
+            if(typeof(that.blogDetail.markdown) == "undefined"){
+              that.blogDetail.markdown = "";
             }
             if(typeof(that.blog.imgIds) == "undefined" || that.blog.imgIds == null){
               that.blog.imgIds = "";
@@ -247,7 +254,7 @@
             if(typeof(that.blog.imgSrc) == "undefined" || that.blog.imgSrc == null){
               that.blog.imgSrc = "";
             }
-            that.blog.markdown += img;
+            that.blogDetail.markdown += img;
             that.blog.imgIds += res.data+",";
             that.blog.imgSrc += callback_data.key+",";
             that.$forceUpdate();

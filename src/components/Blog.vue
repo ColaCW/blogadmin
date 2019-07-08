@@ -179,7 +179,8 @@
       },
       //前往编辑页面
       goAddHtml(row){
-        window.open("static/addBlog.html?id="+row.id);
+        var url = "static/addBlog.html?id=" + (row ? row.id : "");
+        window.open(url);
       },
       //查询数据
       doSearch() {
