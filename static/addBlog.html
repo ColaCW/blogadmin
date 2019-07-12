@@ -35,7 +35,7 @@
     <div class="upload-btn" title="上传" @click="$('.uploadBoxWrap').fadeIn()">
       <img src="img/上传.png" style="width: 30px">
     </div>
-    <div class="save-btn" title="保存" @click="doUpdate()">
+    <div class="save-btn" title="保存" @click="save(1)">
       <img src="img/保存.png" style="width: 25px;margin-top:2px;margin-left: 2px;">
     </div>
     <div class="preview-btn" :title="isPreview ? '编辑':'预览'" @click="changePreview()">
@@ -84,7 +84,7 @@
         <span style="color:red;margin-left: 2px;">*</span>
       </div>
         <div class="release-btn">
-          <div class="releaseBtn" @click="doCreate()">发布</div>
+          <div class="releaseBtn" @click="save(2)">发布</div>
           <div class="cancelBtn" @click="$('.releaseBoxWrap').fadeOut()">取消</div>
           <div style="clear: both"></div>
         </div>
@@ -173,34 +173,12 @@
             }
           })
       },
-      doCreate:function () {
-        var that = this;
-        that.blog.status = 2;
-        var data = {
-          token:that.token,
-          obj:that.blog
-        };
-        Web.post(Web.host + "/api/Blog/create.do",data,function (res) {
-          if(res.status){
-            that.blog = res.data;
-            that.blogDetail.blogId = that.blog.id;
-            var data1 = {
-              token:that.token,
-              obj:that.blogDetail
-            };
-            Web.post(Web.host + "/api/BlogDetail/create.do",data1,function (res1) {
-              if(res1.status){
-                Web.showToast("发布成功",2000);
-                window.close();
-              }
-            })
-          }else{
-            Web.showToast("发布失败",2000);
-          }
-        })
-      },
-      doUpdate:function () {
+      //保存,发布
+      save:function (type) {
           var that = this;
+          if(type == 2){
+            that.blog.status = 2;
+          }
           var data = {
             token:that.token,
             obj:that.blog
@@ -215,12 +193,22 @@
               };
               Web.post(Web.host + "/api/BlogDetail/update.do",data1,function (res1) {
                 if(res1.status){
+                  that.blogDetail = res1.data;
                   window.history.pushState({status: 0} ,'' ,'?id='+that.blog.id);
-                  Web.showToast("保存成功",2000);
+                  if(type == 2){
+                    Web.showToast("发布成功",2000);
+                    window.close();
+                  }else{
+                    Web.showToast("保存成功",2000);
+                  }
                 }
               })
             }else{
-              Web.showToast("保存失败",2000);
+              if(type == 2){
+                Web.showToast("发布失败",2000);
+              }else{
+                Web.showToast("保存失败",2000);
+              }
             }
           })
       },
