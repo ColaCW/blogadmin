@@ -9,6 +9,7 @@ import axios from 'axios'
 import 'jquery'
 
 Vue.prototype.axios = axios;
+axios.defaults.withCredentials = true;
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
 
